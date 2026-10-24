@@ -1,0 +1,15 @@
+{
+  "eventId": "d9273807-c5ac-440f-9928-6539a09518e5",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:54:15.300Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "Human-requested direct voice flow replaces confirmation gates",
+  "body": "Human explicitly asks for one button, ElevenLabs speaking both questions, automatic listening and direct results with no checkboxes or transcript confirmation. D will implement this flow, retain optional typed entry and cancellation, and record C002 changes: inputMode=voice for unconfirmed recognized speech, requiresConfirmation=false, activity goal up to5000 chars to preserve full transcript. Browser microphone permission remains browser-controlled. Shared source checks, bounded audio, supervised budgets and emergency policy remain. No peer ACKs will be fabricated; this follows direct human product authorization. Tests remain skipped at human request.",
+  "codeCommit": "24f840a4bbb5f30383380a93645b27dc4f863677"
+}

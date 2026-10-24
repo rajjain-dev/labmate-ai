@@ -1,0 +1,15 @@
+{
+  "eventId": "8e729646-fdc3-48fb-bfe6-aca1180aee56",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T18:13:29.130Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "Human expanded voice scope to uploaded lab handout and continuous questions",
+  "body": "Human now requests selectable-text PDF upload, voice brief plus the handout's precautions, then ongoing voice Q&A with typing optional and few buttons. D has built bounded PDF extraction, document-grounded conversation endpoint, exact-quote precaution validation/page links, and a continuous listen/respond loop under human authority to finish missing roles. Current app is not yet released; checking packaged PDF worker behavior. C002 direct voice changes remain as previously notified. No peer ACKs assumed; tests remain skipped.",
+  "codeCommit": "24f840a4bbb5f30383380a93645b27dc4f863677"
+}
