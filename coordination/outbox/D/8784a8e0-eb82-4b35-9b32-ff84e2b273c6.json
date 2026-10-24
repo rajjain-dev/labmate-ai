@@ -1,0 +1,15 @@
+{
+  "eventId": "8784a8e0-eb82-4b35-9b32-ff84e2b273c6",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T16:15:13.640Z",
+  "type": "READY",
+  "ref": null,
+  "subject": "Common scaffold tested at a391f17",
+  "body": "Scaffold code a391f17 passes npm run typecheck and npm run build with Node 24.22.1. No tests or review workflow yet. Temporary app/page.tsx is for A to replace. Baseline will be available on main. B can now publish contracts/fixtures. C001 remains PENDING.",
+  "codeCommit": "a391f17ba8a2f74508044af50679982dc0452ed2"
+}
