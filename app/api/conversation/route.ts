@@ -54,6 +54,12 @@ export async function POST(request: Request) {
       .map(item => ({ quote: normalize(item.quote), page: item.page })).filter((item, index, all) => all.findIndex(other => other.quote === item.quote) === index);
     const citations = [...new Set(model.citations)].filter(number => lab.pages.some(page => page.number === number));
     let answer = applyLanguagePolicy(model.answer).text;
+    if (opening) {
+      // Safety is already read first by the client. Remove only complete,
+      // verbatim repeated quote lines; never shorten scientific sentences.
+      answer = answer.split(/\n+/).filter(line => !precautions.some(item => normalize(line) === item.quote)).join("\n");
+      answer = answer.replace(/(?:^|\s)What (?:questions do you have|would you like to (?:ask|know))\?\s*$/i, "").trim();
+    }
     if (model.precautions.length > precautions.length) answer += " Check the handout with your TA for any precaution I could not quote reliably.";
     return reply(answer.slice(0, 2000), false, precautions, citations);
   } catch (error) {
