@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches: [main, feat/student-ui, feat/review-harness, feat/evidence, feat/voice-integration]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      APP_MODE: fixture
+      ENABLE_VOICE: "false"
+      ENABLE_VISION: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test -- --passWithNoTests
+      - run: npm run build
