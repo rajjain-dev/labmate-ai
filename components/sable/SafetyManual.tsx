@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, FileText, Loader2, ShieldCheck, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
 import { LabDocumentSchema, type LabDocument } from "@/lib/lab/contracts";
@@ -63,7 +63,7 @@ type Anim = "rise" | "sink" | null;
  * sheet slides up from the bottom onto the table; down pulls the next sheet
  * up, up pulls the current sheet back down to reveal the previous one.
  */
-export function SafetyManual() {
+export function SafetyManual({ children }: { children: ReactNode }) {
   const [mod, setMod] = useState<LabModule | null>(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [anim, setAnim] = useState<Anim>(null);
@@ -133,7 +133,7 @@ export function SafetyManual() {
 
   return (
     <>
-      <footer className="absolute inset-x-3 bottom-1 z-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-center text-[10px] font-semibold text-muted-foreground sm:bottom-2 sm:text-xs">
+      <footer className="sable-footer absolute inset-x-3 bottom-1 z-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-center font-semibold text-muted-foreground">
         <span>Your course protocol and lab supervisor remain authoritative.</span>
         <button type="button" onClick={() => { conversation.stop(); emergency.current?.showModal(); }} className="underline underline-offset-2">Possible emergency?</button>
       </footer>
@@ -142,10 +142,9 @@ export function SafetyManual() {
         <p className="my-4 leading-relaxed">This app cannot assess an emergency. Alert your lab supervisor or TA now and follow the lab’s posted emergency procedures. Contact local emergency services when immediate help is needed.</p>
         <button type="button" onClick={() => emergency.current?.close()} className="cartoon-sm rounded-full bg-hazard px-4 py-2 font-bold">Close</button>
       </dialog>
-      <div className="absolute right-4 top-4 z-10 rounded-full border border-border/15 bg-card/90 px-3 py-1 text-xs font-semibold text-muted-foreground" role="status">
+      <div className="sable-connection absolute right-4 top-4 z-10 rounded-full border border-border/15 bg-card/90 px-3 py-1 text-xs font-semibold text-muted-foreground" role="status">
         {conversation.connectionError || (!conversation.health ? "Connecting…" : conversation.mode === "fixture" ? "Sample mode" : conversation.voiceMode === "disabled" ? "Voice unavailable · typing available" : "SABLE · voice ready")}
       </div>
-      {!mod && <p className="absolute bottom-20 left-1/2 w-[85vw] -translate-x-1/2 text-center text-xs font-semibold text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</p>}
       <input
         ref={fileRef}
         type="file"
@@ -157,8 +156,11 @@ export function SafetyManual() {
       />
 
       {!mod && (
+        <section className="sable-landing" aria-label="Start with your lab handout">
+          {children}
         <button
           type="button"
+          aria-label="Upload lab handout"
           disabled={loading}
           onClick={() => fileRef.current?.click()}
           onDragOver={(e) => e.preventDefault()}
@@ -166,11 +168,14 @@ export function SafetyManual() {
             e.preventDefault();
             if (!loading) void onFile(e.dataTransfer.files[0]);
           }}
-          className="cartoon-sm absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-hazard px-5 py-2.5 font-display text-base font-bold text-hazard-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0"
+          className="sable-upload cartoon-sm flex items-center gap-2 rounded-full bg-hazard font-display font-bold text-hazard-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0"
         >
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Upload className="size-5" />}
           <span role="status">{loading ? "Reading your handout…" : "Upload lab handout"}</span>
         </button>
+        <p className="sable-upload-hint text-center font-semibold text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</p>
+        <img src="/sable/sable-sleep.png" alt="" width={1024} height={1024} className="sable-landing-mascot animate-[sable-bob_3.6s_ease-in-out_infinite] drop-shadow-md" />
+        </section>
       )}
 
       {mod && (
@@ -178,16 +183,16 @@ export function SafetyManual() {
           {/* sheet peeking out underneath, to suggest a stack */}
           <div
             aria-hidden
-            className="cartoon absolute left-1/2 top-1/2 h-[min(82dvh,44rem)] w-[min(92vw,42rem)] rounded-md bg-paper"
-            style={{ transform: "translate(-50%, -50%) rotate(1.5deg) translateY(8px)" }}
+            className="sable-sheet-back cartoon absolute left-1/2 top-1/2 rounded-md bg-paper"
+            style={{ transform: "translate(-50%, -50%) rotate(.8deg) translateY(5px)" }}
           />
           <div
             role="document"
-            aria-label={`Safety manual: ${mod.name}, page ${pageIndex + 1} of ${pageCount}`}
+            aria-label={`Lab handout: ${mod.name}, page ${pageIndex + 1} of ${pageCount}`}
             onAnimationEnd={event => { if (event.target === event.currentTarget) onSheetAnimationEnd(); }}
-            style={anim ? undefined : { transform: "translate(-50%, -50%) rotate(-1.5deg)" }}
+            style={anim ? undefined : { transform: "translate(-50%, -50%)" }}
             className={cn(
-              "cartoon absolute left-1/2 top-1/2 flex h-[min(82dvh,44rem)] w-[min(92vw,42rem)] flex-col rounded-md bg-card p-3 pt-6 sm:p-6 sm:pt-8",
+              "sable-sheet cartoon absolute left-1/2 top-1/2 flex flex-col rounded-md bg-card",
               anim === "rise" && "animate-[paper-rise_.6s_ease-in-out_both]",
               anim === "sink" && "animate-[paper-sink_.6s_ease-in-out_both]",
             )}
@@ -199,16 +204,16 @@ export function SafetyManual() {
               type="button"
               aria-label="Put manual away"
               onClick={putAway}
-              className="cartoon-sm absolute -right-3 -top-3 flex size-8 items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground"
+              className="sable-sheet-close cartoon-sm absolute -right-3 -top-3 flex items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground"
             >
               <X className="size-4" />
             </button>
 
-            <div className="flex items-center gap-2 border-b-2 border-dashed border-border pb-2">
-              <span className="cartoon-sm flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            <div className="sable-sheet-header border-b-2 border-dashed border-border">
+              <span className="cartoon-sm flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 {pageIndex === 0 ? <ShieldCheck className="size-4" /> : <FileText className="size-4" />}
               </span>
-              <div className="min-w-0 flex-1">
+              <div className="sable-sheet-heading min-w-0">
                 <h2 className="font-display text-lg font-bold leading-tight text-foreground">
                   {pageIndex === 0 ? "Lab handout" : mod.name}
                 </h2>
@@ -218,7 +223,7 @@ export function SafetyManual() {
                     : "Lab handout"}
                 </p>
               </div>
-              <div className="ml-auto">
+              <div className="sable-sheet-controls">
                 <SableAsk conversation={conversation} onPageChange={number => {
                   const index = mod.document.pages.findIndex(page => page.number === number);
                   if (index >= 0) { setPageIndex(index); setZoom(1); }
@@ -227,12 +232,12 @@ export function SafetyManual() {
             </div>
 
             {mod.file ? <PdfPage file={mod.file} page={pageIndex + 1} zoom={zoom} text={currentPage?.text ?? ""} /> : (
-              <div className="mt-4 min-h-0 flex-1 overflow-y-auto whitespace-pre-wrap pr-1 text-base font-medium leading-relaxed text-foreground">
+              <div className="sable-text-page mt-4 min-h-0 flex-1 overflow-y-auto whitespace-pre-wrap pr-1 text-base font-medium leading-relaxed text-foreground" style={{ fontSize: `${16 * zoom}px` }}>
                 {currentPage?.text}
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-3">
+            <div className="sable-sheet-nav flex flex-wrap items-center justify-between gap-2 pt-3">
               <div className="flex gap-2">
                 {mod.file && (
                   <>
@@ -241,16 +246,19 @@ export function SafetyManual() {
                       aria-label="Zoom out"
                       onClick={() => setZoom((z) => Math.max(1, Math.round((z - 0.5) * 100) / 100))}
                       disabled={zoom <= 1 || anim !== null}
-                      className="cartoon-sm flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
+                      title="Zoom out"
+                      className="cartoon-sm flex items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
                     >
                       <ZoomOut className="size-4" />
                     </button>
+                    <span className="sable-zoom-level self-center text-center font-mono text-sm" aria-live="polite">{Math.round(zoom * 100)}%</span>
                     <button
                       type="button"
                       aria-label="Zoom in"
                       onClick={() => setZoom((z) => Math.min(3, z + 0.5))}
                       disabled={zoom >= 3 || anim !== null}
-                      className="cartoon-sm flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
+                      title="Zoom in"
+                      className="cartoon-sm flex items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
                     >
                       <ZoomIn className="size-4" />
                     </button>
@@ -263,7 +271,8 @@ export function SafetyManual() {
                   aria-label="Previous page"
                   onClick={goUp}
                   disabled={pageIndex === 0 || anim !== null}
-                  className="cartoon-sm flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
+                  title="Previous page"
+                  className="cartoon-sm flex items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
                 >
                   <ChevronUp className="size-5" />
                 </button>
@@ -275,12 +284,12 @@ export function SafetyManual() {
                   aria-label="Next page"
                   onClick={goDown}
                   disabled={pageIndex >= pageCount - 1 || anim !== null}
-                  className="cartoon-sm flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
+                  title="Next page"
+                  className="cartoon-sm flex items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40"
                 >
                   <ChevronDown className="size-5" />
                 </button>
               </div>
-              <div className="w-4 sm:w-20" />
             </div>
           </div>
         </>

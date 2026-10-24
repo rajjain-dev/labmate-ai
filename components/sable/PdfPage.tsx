@@ -9,6 +9,19 @@ export function PdfPage({ file, page, zoom, text }: { file: File; page: number; 
   const [error, setError] = useState(false);
   const [rendering, setRendering] = useState(true);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const frame = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(600);
+
+  useEffect(() => {
+    const node = frame.current;
+    if (!node) return;
+    const resize = new ResizeObserver(entries => {
+      const next = Math.round(entries[0]?.contentRect.width ?? 600);
+      if (next > 0) setWidth(previous => Math.abs(previous - next) > 4 ? next : previous);
+    });
+    resize.observe(node);
+    return () => resize.disconnect();
+  }, []);
 
   useEffect(() => {
     let disposed = false;
@@ -35,7 +48,8 @@ export function PdfPage({ file, page, zoom, text }: { file: File; page: number; 
       const sheet = await pdf.getPage(page);
       if (disposed || !canvas.current) return;
       const original = sheet.getViewport({ scale: 1 });
-      const viewport = sheet.getViewport({ scale: Math.min(1.5, 2000 / Math.max(original.width, original.height)) });
+      const density = Math.min(window.devicePixelRatio || 1, 2);
+      const viewport = sheet.getViewport({ scale: Math.min(Math.max(1, width * zoom * density / original.width), 2000 / Math.max(original.width, original.height)) });
       const context = canvas.current.getContext("2d");
       if (!context) throw new Error("Canvas unavailable");
       canvas.current.width = viewport.width;
@@ -46,11 +60,11 @@ export function PdfPage({ file, page, zoom, text }: { file: File; page: number; 
       if (!disposed) setRendering(false);
     })().catch(() => { if (!disposed) { setError(true); setRendering(false); } });
     return () => { disposed = true; task?.cancel(); };
-  }, [pdf, page]);
+  }, [pdf, page, zoom, width]);
 
-  return <div className="relative mt-3 min-h-0 flex-1 overflow-auto rounded-sm border border-border/60 bg-white">
+  return <div ref={frame} className="sable-pdf-page relative mt-3 min-h-0 flex-1 overflow-auto rounded-sm border border-border/60 bg-white">
     {rendering && <p role="status" className="p-4 text-sm text-muted-foreground">Opening page {page}…</p>}
-    {error ? <div className="whitespace-pre-wrap p-5 leading-relaxed"><p className="mb-3 text-sm text-muted-foreground">Showing the extracted handout text.</p>{text}</div>
+    {error ? <div className="whitespace-pre-wrap p-5 leading-relaxed" style={{ fontSize: `${16 * zoom}px` }}><p className="mb-3 text-sm text-muted-foreground">Showing the extracted handout text.</p>{text}</div>
       : <canvas ref={canvas} role="img" aria-label={`Page ${page} of ${file.name}`} className="mx-auto block h-auto max-w-none" style={{ width: `${zoom * 100}%`, visibility: rendering ? "hidden" : "visible" }} />}
   </div>;
 }

@@ -52,11 +52,11 @@ export function SableAsk({ conversation, onPageChange }: { conversation: LabConv
   return <VoiceCoach mode={conversation.voiceMode} disabled={thinking} continuous stopSignal={conversation.stopSignal}
     onBegin={begin} onTranscript={answer} onActiveChange={conversation.setVoiceActive} onCancel={conversation.cancelPending}
     renderControls={({ active, phase, status, error, notice, toggle }) => <>
-      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-        <button type="button" aria-label="Show conversation log" title="Conversation and optional typing" aria-expanded={logOpen} aria-controls="sable-conversation" onClick={() => { setLogOpen(value => !value); setOpen(false); }} className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border/20 bg-paper/70 text-primary transition-colors hover:bg-secondary">
+      <div className="sable-controls flex shrink-0 items-center gap-2">
+        <button type="button" aria-label="Show conversation log" title="Conversation and optional typing" aria-expanded={logOpen} aria-controls="sable-conversation" onClick={() => { setLogOpen(value => !value); setOpen(false); }} className="sable-log flex shrink-0 items-center justify-center rounded-full border border-border/20 bg-paper/70 text-primary transition-colors hover:bg-secondary">
           <MessageCircle className="size-4" />
         </button>
-        <button type="button" aria-label={active ? "End SABLE conversation" : conversation.voiceMode === "disabled" ? "Ask SABLE" : "Talk to SABLE"} aria-pressed={active} disabled={!active && (thinking || !conversation.health)}
+        <button type="button" aria-label={active ? "End SABLE conversation" : conversation.voiceMode === "disabled" ? "Ask SABLE" : "Talk to SABLE"} disabled={!active && (thinking || !conversation.health)}
           onClick={() => {
             if (active) { toggle(); return; }
             setLogOpen(false); setOpen(true);
@@ -64,7 +64,7 @@ export function SableAsk({ conversation, onPageChange }: { conversation: LabConv
             else { setTyping(false); toggle(); }
           }}
           className={cn("sable-talk cartoon-sm flex h-12 shrink-0 items-center gap-1 rounded-full py-1 pl-1 pr-3 transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-50", active ? "bg-secondary text-secondary-foreground" : "bg-hazard text-hazard-foreground")}>
-          <SableAvatar phase={phase} awake={open || logOpen} className="!size-12" />
+          <SableAvatar phase={thinking && phase === "idle" ? "thinking" : phase} awake={open || logOpen} className="!size-12" />
           <span className="flex flex-col items-start text-left"><span className="flex items-center gap-1.5 font-display text-sm font-semibold">{active ? <Square className="size-3 fill-current" /> : <Mic className="size-3" />}{active ? "End conversation" : conversation.voiceMode === "disabled" ? "Ask Sable" : "Talk to Sable"}</span><span className="text-[9px] font-medium opacity-70" role="status">{active ? phase === "listening" ? "Listening · just ask" : phase === "reading" || phase === "asking" ? "Speaking to you" : "Thinking with you…" : conversation.briefed.current ? "Pick up where we left off" : "Your brief, then your questions"}</span></span>
         </button>
       </div>

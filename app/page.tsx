@@ -13,7 +13,7 @@ const TILES = [
 
 export default function Home() {
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-background">
+    <div className="sable-app relative min-h-dvh overflow-hidden bg-background">
       <div
         aria-hidden
         className="table-top pointer-events-none absolute inset-0"
@@ -21,10 +21,8 @@ export default function Home() {
       />
 
       <h1 className="sr-only">SABLE — Your chemistry lab companion</h1>
-      <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2"
-      >
-        <div className="flex items-stretch gap-2" aria-hidden="true">
+      <SafetyManual>
+        <div className="sable-tiles flex items-stretch gap-2" aria-hidden="true">
           {TILES.map((tile, i) => (
             <div
               key={tile.symbol}
@@ -45,20 +43,8 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <p className="mt-6 max-w-80 px-4 text-center text-sm font-semibold leading-relaxed text-muted-foreground">Your handout. A quick brief.<br />A little help, out loud.</p>
-        <div className="relative mt-5" aria-hidden="true">
-          <img
-            src="/sable/sable-sleep.png"
-            alt=""
-            loading="lazy"
-            width={1024}
-            height={1024}
-            className="w-44 animate-[sable-bob_3.6s_ease-in-out_infinite] drop-shadow-md sm:w-52"
-          />
-        </div>
-      </div>
-
-      <SafetyManual />
+        <p className="sable-tagline max-w-80 px-4 text-center font-semibold text-muted-foreground">Your handout. A quick brief.<br />A little help, out loud.</p>
+      </SafetyManual>
     </div>
   );
 }
