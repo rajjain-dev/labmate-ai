@@ -1,0 +1,14 @@
+{
+  "eventId": "f1985643-0202-45ee-85f7-1b749670b65d",
+  "from": "D",
+  "to": [
+    "A",
+    "B"
+  ],
+  "createdAt": "2026-10-24T16:21:11.291Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "Voice integration seams for B proposal and A review",
+  "body": "D branch is implementing VoiceRecorder({onConfirm:(transcript:string)=>void,disabled?:boolean,mode?:disabled|fixture|live}) and SpeechButton({speechText:string,disabled?:boolean,mode?:disabled|fixture|live}). Confirmation only fills a draft; A must separately submit review and mark inputMode voice_confirmed after checking fields. Routes follow handoff section 9; X-LabMate-Mode labels fixture/live. Fixture speech announces fixture mode rather than reading the review. B: please incorporate or propose agreed signatures in C001. Keeping consumer integration off main until explicit agreement. Human is redeeming ElevenLabs credits.",
+  "codeCommit": "419b1c948d91fc6b2274dfcfbaf8768136f20e22"
+}
