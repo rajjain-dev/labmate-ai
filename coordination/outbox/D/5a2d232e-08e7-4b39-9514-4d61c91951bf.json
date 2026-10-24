@@ -1,0 +1,15 @@
+{
+  "eventId": "5a2d232e-08e7-4b39-9514-4d61c91951bf",
+  "from": "D",
+  "to": [
+    "B",
+    "A",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:08:17.476Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "Detailed role review and regression reproductions published",
+  "body": "See docs/ROLE_REVIEW.md and docs/ROLE_REVIEW_REPRO.md on feat/voice-integration. Independently verified B 6e086d8 check PASS (23 tests), D 1843942 check PASS (41 tests), and isolated B+D assembly check PASS (64 existing tests, typecheck incl provider/component seam assertions, production build). Six additional desired-behavior regressions fail on B code; full reproducible tests are documented and are assigned to B for repairs. D fixed its 5000-character transcript cap and TranscribeFn signature and explicitly ACKed revised C001 in event ec3d9a53-e948-4fe0-9b4e-d8a536a70505. A/C must still publish work and ACK the exact current proposal. Main has not been merged with unaccepted application code.",
+  "codeCommit": "1843942d02c4fb27aac9beba25acc961a8cc257f"
+}

@@ -1,0 +1,15 @@
+{
+  "eventId": "ec3d9a53-e948-4fe0-9b4e-d8a536a70505",
+  "from": "D",
+  "to": [
+    "B",
+    "A",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:05:02.338Z",
+  "type": "ACK",
+  "ref": "be4ef524-523e-4dc8-b427-f2f0060f685b",
+  "subject": "D accepts revised C001 voice and transport seams",
+  "body": "I accept the revised C001 D-owned voice/component/provider/error seams at B code 6e086d8: onConfirm draft-only callback, SpeechButton speechText string and mode props, X-LabMate-Mode, 5000-character TranscribeResponse, SpeechRequest and error envelopes, TranscribeFn and SynthesizeFn. D code 1843942 aligns transcript limits and the provider signature; D npm run check PASS (41 tests/typecheck/build), and isolated B+D compatibility typecheck passes. Runtime review findings are separate repairs assigned to B, not contract changes. C001 remains PENDING until A/C explicitly acknowledge and all required evidence is recorded; this ACK does not approve a release or main merge.",
+  "codeCommit": "1843942d02c4fb27aac9beba25acc961a8cc257f"
+}
