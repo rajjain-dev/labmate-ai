@@ -4,7 +4,7 @@ The source of truth is the harness code: `lib/harness/policy.ts` (`POLICY_VERSIO
 
 ## Pipeline
 
-validate the request -> deterministic emergency and out-of-scope routes (no model call) -> retrieve up to five approved passages -> Grok strict JSON -> clip lengths and counts -> drop citations not in the retrieved set -> downgrade unsupported `source_backed` evidence -> rewrite approval and outcome-prediction language, strip HTML -> state precedence -> server-built `speechText` -> final contract validation.
+validate the request -> deterministic emergency and out-of-scope routes (no model call) -> retrieve up to five approved passages -> Grok strict JSON -> clip lengths and counts -> drop citations not in the retrieved set -> downgrade unsupported `source_backed` evidence -> replace any safety finding without an approved source with fixed uncertainty copy and a question for the supervisor -> rewrite approval and outcome-prediction language (scientific quantities such as a 5% concentration are kept), strip HTML -> state precedence -> server-built `speechText` -> final contract validation.
 
 ## States and precedence
 

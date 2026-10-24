@@ -29,6 +29,8 @@ import {
   detectEmergency,
   detectOutOfScope,
   requestGaps,
+  UNSUPPORTED_SAFETY_EXPLANATION,
+  UNSUPPORTED_SAFETY_NEXT_STEP,
 } from "./policy";
 
 export const REVIEW_DEADLINE_MS = 25_000;
@@ -145,6 +147,7 @@ export function normalizeModelReview(
   const list = (xs: string[], n: number, max: number) => xs.map((x) => pol(x, max)).filter((x) => x.length > 0).slice(0, n);
 
   let droppedCitations = 0;
+  let rewrittenSafety = 0;
   const findings: Finding[] = m.findings.slice(0, 8).map((f, i) => {
     const ids = [...new Set(f.sourceIds)].filter((id) => {
       const ok = validIds.has(id);
@@ -153,6 +156,22 @@ export function normalizeModelReview(
     }).slice(0, 3);
     let evidence = f.evidence;
     if (evidence === "source_backed" && ids.length === 0) evidence = "unknown";
+    // Handoff semantic invariant: an unsupported safety requirement is never presented as a factual
+    // instruction. Replace the model's wording with fixed uncertainty copy and a supervisor question,
+    // rather than keeping the imperative behind an evidence label.
+    if (f.category === "safety" && evidence !== "source_backed") {
+      rewrittenSafety++;
+      return {
+        id: `f${i + 1}`,
+        category: f.category,
+        severity: f.severity,
+        title: clip(`Unverified safety point: ${pol(f.title, 100)}`, 100),
+        explanation: UNSUPPORTED_SAFETY_EXPLANATION,
+        nextStep: UNSUPPORTED_SAFETY_NEXT_STEP,
+        evidence,
+        sourceIds: [],
+      };
+    }
     return {
       id: `f${i + 1}`,
       category: f.category,
@@ -165,6 +184,7 @@ export function normalizeModelReview(
     };
   });
   if (droppedCitations > 0) warnings.push(`Removed ${droppedCitations} citation(s) not in the approved source set.`);
+  if (rewrittenSafety > 0) warnings.push(`Rewrote ${rewrittenSafety} safety point(s) without an approved source as questions for your supervisor.`);
 
   const seen = new Set<string>();
   const missingInformation = [...gaps.map((g) => clip(g, 200)), ...list(m.missingInformation, 6, 200)]

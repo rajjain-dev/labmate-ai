@@ -4,7 +4,7 @@
  */
 import type { ReviewRequest, ReviewState, Finding } from "../contracts";
 
-export const POLICY_VERSION = "policy-2026-10-24.1";
+export const POLICY_VERSION = "policy-2026-10-24.2";
 
 export const PRODUCT_LIMIT =
   "LabMate helps you prepare questions and review your plan. Your course protocol, lab supervisor, and institutional safety procedures remain authoritative.";
@@ -14,6 +14,11 @@ export const EMERGENCY_COPY =
 
 export const OUT_OF_SCOPE_COPY =
   "LabMate only reviews plans for the selected introductory teaching lab context. This request is outside that scope, so no review was generated. Please discuss it with your lab supervisor or TA.";
+
+/** Fixed copy for a safety finding that has no approved source behind it (handoff semantic invariants). */
+export const UNSUPPORTED_SAFETY_EXPLANATION =
+  "No approved source passage supports this safety point, so LabMate is not stating it as a requirement. Your course protocol and lab supervisor decide what applies.";
+export const UNSUPPORTED_SAFETY_NEXT_STEP = "Ask your lab supervisor or TA whether this applies to your plan, and what they require, before you continue.";
 
 export const SYSTEM_POLICY = [
   "You help undergraduate students prepare for supervised teaching labs.",
@@ -108,7 +113,10 @@ export function deriveState(modelState: ReviewState, findings: Finding[], missin
 
 // --- Output language policy
 const BANNED: Array<[RegExp, string]> = [
-  [/\b\d{1,3}(\.\d+)?\s?(%|percent)\s?(chance|probability|likel\w*|success\w*|confiden\w*)?/gi, "[no outcome estimate]"],
+  // Outcome/confidence percentages only. Scientific quantities ("5% concentration", "10% w/v") are kept.
+  [/\b\d{1,3}(?:\.\d+)?\s?(?:%|percent)\s*(?:chance|probabilit\w*|likel\w*|odds|success\w*|confiden\w*|certain\w*|sure)\b(?!\s+(?:interval|level|limit)s?\b)/gi, "[no outcome estimate]"],
+  [/\b(?:chance|probability|likelihood|odds|confidence(?!\s+(?:interval|level|limit)s?\b)|certainty|success rate)\b[^.%\d]{0,40}\d{1,3}(?:\.\d+)?\s?(?:%|percent)/gi, "[no outcome estimate]"],
+  [/\b\d{1,3}(?:\.\d+)?\s?(?:%|percent) of the time\b/gi, "[no outcome estimate]"],
   [/\b(is|are|it'?s|looks|seems|appears)\s+(completely |perfectly |totally )?safe\b/gi, "has been reviewed only for the listed concerns"],
   [/\bsafe to (proceed|perform|do|conduct|run|go ahead)\b/gi, "for your supervisor to check"],
   [/\b(approved?|authori[sz]ed?|cleared) (to|for) (proceed|go|start|perform|run)\b/gi, "to discuss with your supervisor"],
