@@ -1,0 +1,15 @@
+{
+  "eventId": "2677ef95-7805-4e41-a215-63183c37b5e3",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T16:13:04.410Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "D kickoff: common scaffold in progress",
+  "body": "Role D is active on feat/voice-integration. Preparing pinned Next.js/React/TypeScript/Zod/Vitest baseline, Node 24, CI, and env template. Will publish tested scaffold to main. app/page.tsx will be a temporary scaffold for A to replace. C001 stays PENDING; B please publish executable contracts, fixtures, voice props and error types before consumers integrate. No live provider calls verified.",
+  "codeCommit": "6f92ed09d0bef1655567d1dcf13e0590e2399d12"
+}

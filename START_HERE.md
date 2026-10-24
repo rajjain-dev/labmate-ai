@@ -1,6 +1,6 @@
 # Start working on LabMate AI
 
-The shared repository is [rajjain-dev/labmate-ai](https://github.com/rajjain-dev/labmate-ai). It is private. The handoff describes the project; the coordination kit provides development instructions and a communication helper. The LabMate application has not been built yet.
+The shared repository is [rajjain-dev/labmate-ai](https://github.com/rajjain-dev/labmate-ai). It is private. The handoff describes the project; the coordination kit provides development instructions and a communication helper. A common Next.js scaffold is available; check docs/STATUS.md for the actual integration state.
 
 ## Share the handoff now
 
@@ -45,7 +45,7 @@ Use the matching branch and ID for B, C or D. A current supported Node LTS and G
 
 After cloning and selecting your branch, read AGENTS.md and docs/LABMATE_HANDOFF.md, then run the coordination read command with your own ID. Missing peer branches mean those owners have not published yet; they are not evidence of completed work. Follow coordination/PROTOCOL.md to commit and push your own progress and messages. D merges tested slices into main and verifies the assembled and deployed build.
 
-There is no package.json or runnable application in this starter yet. Do not run npm ci or npm run dev until D has published the application scaffold and lockfile. The coordination helper itself needs only Node and Git.
+Merge the latest main into your assigned branch to obtain the common scaffold. Use Node 24 from `.nvmrc`, run `npm ci`, copy `.env.example` to `.env.local`, then `npm run dev`. The coordination helper itself needs only Node and Git. The initial page is a scaffold placeholder for A to replace.
 
 ## Starter message for your friend
 

@@ -6,3 +6,7 @@ node_modules/
 .next/
 coverage/
 .coord-local/
+*.tsbuildinfo
+.DS_Store
+test-results/
+playwright-report/
