@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T18:30:34.951Z",
+  "updatedAt": "2026-10-24T18:34:48.709Z",
   "state": "MERGED",
-  "codeCommit": "eb3799cbd729ebc2e2c84bcafb318372f73400a1",
+  "codeCommit": "ada83eca6baa3e051931ec54acfe39fcc46c3d78",
   "contractRevision": "C002",
-  "doing": "Integrated PDF handout briefings, source-quoted precautions, ongoing voice questions and optional typing; custom cheerful neutral-sounding ElevenLabs voice configured locally.",
-  "next": "User microphone trial on localhost:3107; finish demo and submission materials.",
-  "blockers": "No human microphone/pause-detection pass yet. Public live hosting requires shared limits. Test suites intentionally skipped.",
-  "checks": "eb3799cbd729ebc2e2c84bcafb318372f73400a1: npm run build PASS with TypeScript and standalone packaging. Prior same conversation code live PDF extraction HTTP200, Grok brief HTTP200 (3 exact source quotes), follow-up HTTP200, ElevenLabs briefing HTTP200 and streaming-WebM transcription HTTP200/requiresConfirmation:false. Custom Voice Design/create HTTP200; new voice preview and greeting TTS HTTP200. Browser refreshed PDF upload/Start enabled PASS. Suites SKIPPED by human; actual mic/continuous spoken loop not exercised."
+  "doing": "Applied the first cheerier ElevenLabs preview selected by the human as LabMate - Bright Companion; regenerated fixed greeting and restarted localhost:3107.",
+  "next": "Continue demo preparation and human microphone trial.",
+  "blockers": "Human microphone/pause-detection end-to-end trial remains unverified. Public live hosting requires shared limits. Test suites intentionally skipped.",
+  "checks": "ada83eca6baa3e051931ec54acfe39fcc46c3d78: production npm run build PASS including TypeScript and standalone packaging. Selected preview voice saved through ElevenLabs HTTP200; new-voice greeting generation HTTP200 (99935 MP3 bytes). Restarted the standalone app using updated local configuration. Test suites SKIPPED at human request. Other current primary-checkout UI/style/package changes remain outside this isolated voice release."
 }

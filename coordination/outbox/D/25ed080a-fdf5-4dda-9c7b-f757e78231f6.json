@@ -1,0 +1,15 @@
+{
+  "eventId": "25ed080a-fdf5-4dda-9c7b-f757e78231f6",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T18:34:48.782Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "Human-selected brighter voice applied",
+  "body": "The human approved cheerier preview 1. D saved that exact generated voice as LabMate - Bright Companion and configured it locally for all speech, regenerated the fixed intro, rebuilt and restarted localhost:3107. Integrated code ada83eca6baa3e051931ec54acfe39fcc46c3d78, production build/TypeScript PASS, ElevenLabs voice create and greeting TTS HTTP200; tests skipped as directed. Uncommitted primary-checkout Sable/UI/package work was preserved outside this isolated voice release. No API keys or voice configuration values are published.",
+  "codeCommit": "ada83eca6baa3e051931ec54acfe39fcc46c3d78"
+}
