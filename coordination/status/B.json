@@ -1,12 +1,12 @@
 {
   "agent": "B",
   "branch": "feat/review-harness",
-  "updatedAt": "2026-10-24T16:34:25.726Z",
+  "updatedAt": "2026-10-24T16:55:34.603Z",
   "state": "READY",
-  "codeCommit": "6e086d8faffb70d99dee771d5a0394c08ea665fa",
+  "codeCommit": "e4c34ad6c13d8564f4aeaa12568d87b46cbb924f",
   "contractRevision": "PENDING",
-  "doing": "C001 revised proposal on common scaffold: contracts, fixtures, harness, Grok adapter, review/health routes",
-  "next": "Await A/C/D ACK of the revised C001 event; live Grok smoke once XAI_API_KEY/XAI_MODEL exist; wire C's RetrieveFn; labmate-review skill",
-  "blockers": "Live Grok untested (no key). C001 needs explicit ACKs from A, C, D.",
-  "checks": "On 6e086d8 (Node 24.22.1): npm run check PASS (typecheck, 23 Vitest tests, production build). next start smoke PASS: /api/health sanitized; /api/review fixture 200 with no-store + X-LabMate-Mode: fixture; malformed JSON 400 BAD_REQUEST. Live Grok and live retrieval NOT tested."
+  "doing": "Harness slice 2: same-origin /api/review, safety/negative tests, labmate-review skill (MIT) on top of revised C001",
+  "next": "Await A/C/D ACK of C001 event be4ef524; live Grok smoke once XAI_API_KEY/XAI_MODEL exist; wire C's RetrieveFn when C publishes",
+  "blockers": "Live Grok untested (no key). C001 needs explicit ACKs from A, C, D. A and C have not published status.",
+  "checks": "On e4c34ad (Node 24.22.1): npm run check PASS (typecheck, 42 Vitest tests, production build). agentskills validate skills/labmate-review PASS. next start smoke PASS: skill script fixture review exit 0, emergency fixed copy, cross-origin POST 403, same-origin 200. Live Grok and live retrieval NOT tested."
 }
