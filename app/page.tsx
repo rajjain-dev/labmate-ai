@@ -22,10 +22,9 @@ export default function Home() {
 
       <h1 className="sr-only">SABLE — Your chemistry lab companion</h1>
       <div
-        aria-hidden
         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2"
       >
-        <div className="flex items-stretch gap-2" role="img" aria-label="SABLE">
+        <div className="flex items-stretch gap-2" aria-hidden="true">
           {TILES.map((tile, i) => (
             <div
               key={tile.symbol}
@@ -46,7 +45,8 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <div className="relative mt-10">
+        <p className="mt-6 max-w-80 px-4 text-center text-sm font-semibold leading-relaxed text-muted-foreground">Your handout. A quick brief.<br />A little help, out loud.</p>
+        <div className="relative mt-5" aria-hidden="true">
           <img
             src="/sable/sable-sleep.png"
             alt=""
@@ -55,17 +55,6 @@ export default function Home() {
             height={1024}
             className="w-44 animate-[sable-bob_3.6s_ease-in-out_infinite] drop-shadow-md sm:w-52"
           />
-          <span className="pointer-events-none absolute left-[56%] top-[2%] h-12 w-10">
-            {["z", "Z", "z"].map((z, i) => (
-              <span
-                key={z + i}
-                className="absolute inset-0 animate-[snore-z_3.2s_ease-out_infinite] text-center font-display text-xl font-bold text-muted-foreground"
-                style={{ animationDelay: `${i * 1.05}s` }}
-              >
-                {z}
-              </span>
-            ))}
-          </span>
         </div>
       </div>
 

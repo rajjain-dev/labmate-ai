@@ -1,0 +1,20 @@
+.avatar{position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:4rem;height:4rem;isolation:isolate}
+.character{width:100%;height:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 3px 2px #26485314);animation:breathe 4s ease-in-out infinite}
+.halo{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,#d3eeea99,transparent 72%);transform:scale(1.3);transition:background .3s}
+.sparkle{position:absolute;top:1%;right:0;font-size:15px;color:#3e968c;opacity:0;animation:shine 4s ease-in-out infinite}
+.wave{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;gap:2px;bottom:0;left:50%;transform:translateX(-50%);height:13px;padding:2px 5px;border-radius:20px;background:#fffdf6;box-shadow:0 1px 5px #123e3b18}
+.wave i{width:2px;height:3px;background:#398f83;border-radius:3px}
+.wave i:nth-child(2){height:7px}.wave i:nth-child(3){height:10px}.wave i:nth-child(4){height:6px}
+.avatar[data-phase="listening"] .halo{animation:listen 2s ease-out infinite;background:#9bd6c85c}
+.avatar[data-phase="reading"] .character,.avatar[data-phase="asking"] .character{animation:speak .8s ease-in-out infinite}
+.avatar[data-phase="reading"] .wave i,.avatar[data-phase="asking"] .wave i,.avatar[data-phase="listening"] .wave i{animation:wave .65s ease-in-out infinite alternate}
+.avatar .wave i:nth-child(2){animation-delay:-.3s}.avatar .wave i:nth-child(3){animation-delay:-.1s}.avatar .wave i:nth-child(4){animation-delay:-.4s}
+.avatar[data-phase="thinking"] .character,.avatar[data-phase="transcribing"] .character,.avatar[data-phase="preparing"] .character{animation:ponder 2.5s ease-in-out infinite}
+.avatar[data-phase="thinking"] .sparkle,.avatar[data-phase="transcribing"] .sparkle{opacity:1}
+@keyframes breathe{50%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes speak{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes ponder{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-2px)}}
+@keyframes listen{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes wave{to{height:10px}}
+@keyframes shine{0%,60%,100%{opacity:0;transform:scale(.7)}75%{opacity:.8;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.avatar *{animation:none!important;transition:none!important}}

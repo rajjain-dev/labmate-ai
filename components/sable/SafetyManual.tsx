@@ -151,7 +151,7 @@ export function SafetyManual() {
         type="file"
         accept=".pdf,.txt,.md,application/pdf,text/plain"
         disabled={loading}
-        aria-label="Upload safety manual"
+        aria-label="Upload lab handout"
         className="hidden"
         onChange={(e) => onFile(e.target.files?.[0])}
       />
@@ -169,7 +169,7 @@ export function SafetyManual() {
           className="cartoon-sm absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-hazard px-5 py-2.5 font-display text-base font-bold text-hazard-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0"
         >
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Upload className="size-5" />}
-          <span role="status">{loading ? "Reading your manual…" : "Upload safety manual"}</span>
+          <span role="status">{loading ? "Reading your handout…" : "Upload lab handout"}</span>
         </button>
       )}
 
@@ -210,12 +210,12 @@ export function SafetyManual() {
               </span>
               <div className="min-w-0 flex-1">
                 <h2 className="font-display text-lg font-bold leading-tight text-foreground">
-                  {pageIndex === 0 ? "Safety Manual" : mod.name}
+                  {pageIndex === 0 ? "Lab handout" : mod.name}
                 </h2>
                 <p className="truncate text-xs font-semibold text-muted-foreground">
                   {pageIndex === 0
                     ? `${mod.name} · ${mod.mediaType === "application/pdf" ? "PDF" : "TEXT"} · ${formatSize(mod.size)}`
-                    : "Safety Manual"}
+                    : "Lab handout"}
                 </p>
               </div>
               <div className="ml-auto">

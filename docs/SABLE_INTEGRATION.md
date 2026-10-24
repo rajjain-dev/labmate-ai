@@ -21,3 +21,9 @@ Verification on October 24, 2026:
 - Test suites remain skipped under the prior human delivery instruction. Browser microphone capture, pause detection and uninterrupted spoken turns require a human microphone trial; the above checks do not establish that result.
 
 Sable’s local preview uses http://127.0.0.1:3108. The separate LabMate animation work retains its own checkout and port 3107. There is no new public deployment.
+
+## Conversation polish requested by the human
+
+Sable now has one primary Talk/End conversation button with a readable state label. It replaces the duplicate microphone/mascot start controls. The log remains separate. Typing is collapsed behind Type instead; selecting it ends the active voice session and opens the text input directly. Back to handout minimizes the panel while the voice session continues, so the student can inspect the PDF and its citations without restarting. Ending voice remains an explicit action on the primary button. The panel is smaller, leaving more of the handout in view.
+
+An awake mascot variant replaces the sleeping pose during a conversation. Its halo, small waveform and movement follow the voice engine’s actual phase: listening, thinking or speaking. Motion honors prefers-reduced-motion. This is phase-based animation, not audio-level lip synchronization. The generated asset and its full prompt are documented in public/sable/ASSETS.md.
