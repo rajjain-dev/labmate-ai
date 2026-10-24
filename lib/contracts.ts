@@ -139,6 +139,7 @@ export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
 
 export const ErrorCodeSchema = z.enum([
   "BAD_REQUEST", // 400 malformed body
+  "FORBIDDEN", // 403 cross-origin call (D's voice routes)
   "PAYLOAD_TOO_LARGE", // 413
   "UNSUPPORTED_MEDIA", // 415
   "VALIDATION_ERROR", // 422
@@ -148,6 +149,13 @@ export const ErrorCodeSchema = z.enum([
   "TIMEOUT", // 504
 ]);
 export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
+// Clients branch on HTTP status and `retryable`, not on the code alone: D's voice routes report
+// 400/413/415 as VALIDATION_ERROR, which C001 accepts. Every error body still matches ErrorResponseSchema.
+
+/** Response header on review, transcribe and speech success bodies: which mode actually produced them. */
+export const MODE_HEADER = "X-LabMate-Mode" as const;
+export const ResponseModeSchema = z.enum(["live", "fixture"]);
+export type ResponseMode = z.infer<typeof ResponseModeSchema>;
 
 export const ErrorResponseSchema = z
   .object({
@@ -242,19 +250,31 @@ export interface ReviewDependencies {
 
 // ---------------------------------------------------------------------------
 // Voice component props (D supplies components/voice/, A mounts them)
+// Matches D's tested candidate df33e29 (docs/VOICE_INTEGRATION.md on feat/voice-integration).
 // ---------------------------------------------------------------------------
 
+/** Client-side voice mode; components default to "disabled". */
+export const VoiceModeSchema = z.enum(["disabled", "fixture", "live"]);
+export type VoiceMode = z.infer<typeof VoiceModeSchema>;
+
 export interface VoiceRecorderProps {
+  /**
+   * Called with the student-confirmed transcript. Fills a draft only and never submits a review.
+   * A maps it into the form fields, preserves edits, and sets inputMode "voice_confirmed" only after
+   * confirmation; editing the transcript afterwards invalidates that confirmation.
+   */
+  onConfirm: (transcript: string) => void;
   /** Disable while a review call is in flight. */
   disabled?: boolean;
-  /** Called with the editable draft transcript; A puts it in an editable field and requires confirmation. */
-  onTranscript: (transcript: string) => void;
-  /** Human readable error; A keeps the typed form usable. */
-  onError?: (message: string) => void;
+  mode?: VoiceMode;
 }
 
 export interface SpeechButtonProps {
-  /** Only the latest validated ReviewResponse.speechText; null hides/disables the button. */
-  speechText: string | null;
+  /**
+   * Only the newest validated ReviewResponse.speechText. A unmounts the button (or passes the new text)
+   * when form edits invalidate the old review; changing the prop cancels stale playback.
+   */
+  speechText: string;
   disabled?: boolean;
+  mode?: VoiceMode;
 }

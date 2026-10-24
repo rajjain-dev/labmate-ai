@@ -1,8 +1,8 @@
-// Harness and policy tests (owner: B). Run: npx tsx --test tests/*.test.ts  (Node built-in test runner)
-import { test } from "node:test";
+// Harness and policy tests (owner: B). Run: npm test  (Vitest, via the common scaffold)
+import { test } from "vitest";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { ReviewRequestSchema, ReviewResponseSchema, type GenerateFn, type ReviewDependencies, type RetrieveFn, type SourcePassage } from "../lib/contracts";
+import { ErrorResponseSchema, MODE_HEADER, ReviewRequestSchema, ReviewResponseSchema, type GenerateFn, type ReviewDependencies, type RetrieveFn, type SourcePassage } from "../lib/contracts";
 import { runReview, HarnessError } from "../lib/harness/runReview";
 import { handleReviewPost, handleHealth, _resetRateLimit, readConfig } from "../lib/harness/http";
 import { EMERGENCY_COPY, applyLanguagePolicy, detectEmergency, maxState } from "../lib/harness/policy";
@@ -224,6 +224,7 @@ test("HTTP: fixture mode returns labeled fixture and no-store", async () => {
   const res = await handleReviewPost(post(JSON.stringify(waterReq)), { config: readConfig({ APP_MODE: "fixture" }) });
   assert.equal(res.status, 200);
   assert.equal(res.headers.get("cache-control"), "no-store");
+  assert.equal(res.headers.get(MODE_HEADER), "fixture");
   const b = await res.json();
   assert.equal(b.meta.mode, "fixture");
   assert.equal(b.clientRequestId, waterReq.clientRequestId);
@@ -260,4 +261,12 @@ test("HTTP: health is sanitized", async () => {
   const text = await res.text();
   assert.doesNotMatch(text, /secret-key|grok-x/);
   assert.equal(JSON.parse(text).capabilities.review, "live");
+});
+
+test("C001 error schema accepts D's voice route error bodies", () => {
+  const id = randomUUID();
+  for (const [code, retryable] of [["FORBIDDEN", false], ["VALIDATION_ERROR", false], ["TIMEOUT", true], ["UPSTREAM_INVALID", true]] as const) {
+    assert.ok(ErrorResponseSchema.safeParse({ requestId: id, error: { code, message: "m", retryable } }).success, code);
+  }
+  assert.equal(ErrorResponseSchema.safeParse({ requestId: id, error: { code: "NOPE", message: "m", retryable: false } }).success, false);
 });

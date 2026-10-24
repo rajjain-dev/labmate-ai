@@ -28,7 +28,7 @@ export function extractOutputText(data: unknown): string {
   throw new ProviderError(null, "No text output in Grok response");
 }
 
-export function createGrokGenerate(env: { XAI_API_KEY?: string; XAI_MODEL?: string } = process.env): GenerateFn | null {
+export function createGrokGenerate(env: Record<string, string | undefined> = process.env): GenerateFn | null {
   const key = env.XAI_API_KEY;
   const model = env.XAI_MODEL;
   if (!key || !model) return null;

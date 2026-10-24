@@ -5,6 +5,7 @@
 import { randomUUID } from "node:crypto";
 import {
   CONTRACT_REVISION,
+  MODE_HEADER,
   SCHEMA_VERSION,
   ReviewRequestSchema,
   type ErrorCode,
@@ -40,6 +41,7 @@ export function readConfig(env: Record<string, string | undefined> = process.env
 
 const STATUS: Record<ErrorCode, number> = {
   BAD_REQUEST: 400,
+  FORBIDDEN: 403,
   PAYLOAD_TOO_LARGE: 413,
   UNSUPPORTED_MEDIA: 415,
   VALIDATION_ERROR: 422,
@@ -140,10 +142,10 @@ export async function handleReviewPost(
     if (!check.success) {
       return errorResponse("VALIDATION_ERROR", check.error.issues.map((i) => `${i.path.join(".") || "body"}: ${i.message}`).join("; ").slice(0, 500));
     }
-    if (cfg.appMode === "fixture") return json(fixtureReview(check.data, cfg));
+    if (cfg.appMode === "fixture") return json(fixtureReview(check.data, cfg), 200, { [MODE_HEADER]: "fixture" });
     const deps = opts.deps ?? liveDependencies();
     const result = await runReview(check.data, deps, { corpusVersion: cfg.corpusVersion, signal: req.signal });
-    return json(result);
+    return json(result, 200, { [MODE_HEADER]: result.meta.mode });
   } catch (e) {
     if (e instanceof HarnessError) return errorResponse(e.code, e.message);
     return errorResponse("REVIEW_UNAVAILABLE", "Review unavailable.");

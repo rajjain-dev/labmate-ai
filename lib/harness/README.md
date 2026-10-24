@@ -12,14 +12,17 @@ validate (Zod, strict) -> deterministic emergency / out-of-scope routes (zero mo
 - `lib/providers/grok.ts` — xAI Responses API adapter (`XAI_API_KEY`, `XAI_MODEL`).
 - `app/api/review/route.ts`, `app/api/health/route.ts` — thin Next.js route handlers.
 - `data/fixtures/` — requests (water/sugar, emergency, out-of-scope) and two contract-valid responses.
-- `tests/harness.test.ts` — 22 tests.
+- `tests/harness.test.ts` — Vitest suite (contracts, policy, harness, transport).
 
 ## Run
 ```sh
-npx tsx --test tests/*.test.ts     # Node built-in test runner; no vitest needed
+npm test            # Vitest from the common scaffold
+npm run check       # typecheck + tests + production build
 ```
 
 ## Integration notes for D
-- Dependencies requested: `zod@3.25.x` (runtime); `tsx` (dev, for tests). Route imports use relative paths and import JSON fixtures, so keep `resolveJsonModule: true` (Next default).
+- No extra dependencies: uses the scaffold's pinned `zod` 4.6.7 and Vitest. Route imports use relative paths and import JSON fixtures, so keep `resolveJsonModule: true` (Next default).
 - Live retrieval: pass C's `RetrieveFn` into `liveDependencies(retrieve)` in `handleReviewPost`; until merged, live reviews run with no sources and a visible warning.
 - `APP_MODE` defaults to `fixture`; set `APP_MODE=live` explicitly after the Grok smoke test.
+- Review success responses carry `X-LabMate-Mode: fixture|live` (`MODE_HEADER`), matching D's voice routes.
+- Voice props in `contracts.ts` mirror D's tested candidate (`onConfirm`, `speechText: string`, `mode`).
