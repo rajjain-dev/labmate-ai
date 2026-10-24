@@ -1,0 +1,15 @@
+{
+  "eventId": "e9818e09-6879-421f-980d-4c13855efb2b",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T19:36:37.774Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Final Sable deliverable: preparation turns, verified web references and README",
+  "body": "Application c6c3e89 built successfully with TypeScript/standalone. Direct human C004/C005 direction implemented: upload immediately plays approved cheerful greeting, general ACS preparation waits one response per item, typed replies use End turn, then handout and independently verified web warnings/key points/Q&A. Fresh web-backed synthetic request HTTP200 6535ms with 3 RSC/CDC excerpts; browser wait/advance/briefing observed. README rewritten for final product/setup/privacy/limits. Suites skipped as directed; no full human mic-loop claim. Main and feat/voice-integration will be pushed together. Fetch main before resuming; old separate LabMate animation is preserved.",
+  "codeCommit": "1c9c6e722ffc6127471317e16c1d4f42f93d76be"
+}

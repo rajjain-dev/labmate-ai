@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T19:12:40.787Z",
+  "updatedAt": "2026-10-24T19:36:37.702Z",
   "state": "MERGED",
-  "codeCommit": "88a289ac797f9320028a1bdb0a5cdd3056b48ab4",
-  "contractRevision": "C003",
-  "doing": "Delivered Sable: upload starts safety notes/warnings, then key points and conversational Q&A. Upload is higher on a one-screen landing; controls are at least 44px and the PDF/chat layout is responsive.",
-  "next": "Human microphone trial in the opened Sable app at localhost:3108; finish hackathon submission.",
-  "blockers": "Full human microphone/pause-detection loop is not claimed. Public live hosting requires shared limits. Test suites intentionally skipped.",
-  "checks": "88a289ac797f9320028a1bdb0a5cdd3056b48ab4: npm run build PASS including TypeScript and standalone packaging. No landing overflow at 1280x720, 390x844, 320x568. Phone document controls >=44x44px; zoom and page navigation PASS. Browser upload automatically opened safety-first briefing; no full mic trial. Final live PDF/Grok/TTS HTTP200, 3 grounded safety quotes, 0 repeated quote lines, 633251 MP3 bytes. Suites SKIPPED by human request."
+  "codeCommit": "1c9c6e722ffc6127471317e16c1d4f42f93d76be",
+  "contractRevision": "C005",
+  "doing": "Final Sable MVP: immediate greeting, one preparation item per reply, End turn for typed responses, then handout/verified web warnings, key points and conversational Q&A. README updated for delivery.",
+  "next": "Human microphone trial and hackathon submission; supervised app localhost:3108.",
+  "blockers": "Full human microphone loop not claimed. Public live hosting requires shared limits. Automated test suites skipped by explicit human instruction.",
+  "checks": "Application c6c3e89: npm run build PASS including TypeScript and standalone. Fresh web-backed synthetic briefing HTTP200 in 6535ms with 3 independently verified RSC/CDC excerpts. Browser upload immediately showed first preparation/speaking; Type instead retained step, not yet waited, yes/done advanced exactly one item, final ready opened linked briefing before Key points. New first-greeting live MP3 HTTP200 230756bytes. Suites SKIPPED. Delivery docs only follow application build."
 }
