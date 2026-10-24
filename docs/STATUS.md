@@ -3,7 +3,7 @@
 Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coordination/status/D.json.
 
 - Current experience: upload a selectable-text lab PDF, start voice, hear the overview and exact handout precaution quotes, then ask ongoing questions. Voice is primary; typing is optional. No app checkboxes, grading, or transcript-confirmation gate.
-- Voice character: custom ElevenLabs Voice Design voice created for a cheerful, gently playful, neutral-sounding companion; live preview and fixed greeting generation succeeded. The same delivery settings apply to all spoken briefings and answers.
+- Voice character: the human chose the first cheerier preview, saved as the custom ElevenLabs voice “LabMate - Bright Companion,” replacing the earlier subdued voice. The selected bright, playful, neutral-sounding voice is configured locally for all briefings and answers; its fixed greeting was regenerated.
 - Human authority: D may complete other roles, skip test suites, remove confirmation, and implement the uploaded-handout conversation. C002 records this direction without fabricated peer ACKs.
 - Production compilation: npm run build PASS, including TypeScript, standalone package and PDF worker. Final release evidence is recorded with the code commit.
 - Targeted packaged PDF diagnostic: HTTP 200; synthetic one-page handout, 297 extracted characters, 156 ms. Initial worker handoff failure was repaired: byte buffers now travel inside an object, preserving them through Turbopack's worker wrapper.
