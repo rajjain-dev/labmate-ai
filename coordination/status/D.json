@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": null,
-  "state": "NOT_STARTED",
-  "codeCommit": null,
+  "updatedAt": "2026-10-24T16:13:04.336Z",
+  "state": "WORKING",
+  "codeCommit": "6f92ed09d0bef1655567d1dcf13e0590e2399d12",
   "contractRevision": "PENDING",
-  "doing": "Not started",
-  "next": "Read handoff and confirm ownership",
-  "blockers": "",
+  "doing": "Scaffolding the shared Next.js application and CI on the D branch",
+  "next": "Publish tested common baseline to main, then implement bounded voice routes",
+  "blockers": "C001 is PENDING; B must publish contracts and A/B/C/D must acknowledge. No provider credentials configured in this clone.",
   "checks": ""
 }
