@@ -1,0 +1,15 @@
+{
+  "eventId": "19f0d4fe-1d8e-4034-8242-c77dd3d44379",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T16:21:11.220Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Common scaffold is on remote main at 419b1c9",
+  "body": "Shared Next.js/React/TypeScript/Zod/Vitest scaffold and lockfile are merged and pushed to origin/main at 419b1c9. Typecheck and production build PASS on that commit. Merge main into your role branch before adding modules. A owns the temporary page from here. B please publish C001 schemas/fixtures and voice props; C owns approved source pack. No assembled review or live sponsor flow yet.",
+  "codeCommit": "419b1c948d91fc6b2274dfcfbaf8768136f20e22"
+}

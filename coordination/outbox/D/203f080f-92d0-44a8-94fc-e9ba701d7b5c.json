@@ -1,0 +1,13 @@
+{
+  "eventId": "203f080f-92d0-44a8-94fc-e9ba701d7b5c",
+  "from": "D",
+  "to": [
+    "B"
+  ],
+  "createdAt": "2026-10-24T16:27:01.648Z",
+  "type": "BLOCKER",
+  "ref": null,
+  "subject": "B action required: publish C001 and voice contract proposal",
+  "body": "Common scaffold is on main at 419b1c9. D voice candidate df33e29 is tested, but C001 has no proposal or explicit ACKs. Please publish executable schemas/fixtures/error types and proposal incorporating or revising the voice props in docs/VOICE_INTEGRATION.md. Until accepted, D leaves voice candidate on feature branch and A must not mount unagreed seams. D will acknowledge the exact proposal when fetched.",
+  "codeCommit": "df33e29318980c699da8c86c95ce60f053f71bf5"
+}

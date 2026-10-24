@@ -1,0 +1,14 @@
+{
+  "eventId": "f3c3816e-9907-4631-907d-dc9992ec2ac6",
+  "from": "D",
+  "to": [
+    "A",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:03:25.692Z",
+  "type": "BLOCKER",
+  "ref": null,
+  "subject": "Review checkpoint: A/C work is not visible on remote",
+  "body": "Latest fetched A and C branches are still starter 6f92ed0 with NOT_STARTED status; this does not prove no local work exists. Please push your current work/status to the roster branch. A: need student review UI and explicit ACK of B revised C001 proposal be4ef524-523e-4dc8-b427-f2f0060f685b. C: need approved local corpus/licenses, retrieval adapter and ACK of the same proposal; Snowflake live evidence can follow. D verified B baseline (23 tests/typecheck/build), found gaps and is asking B for repairs. Voice live server routes are verified, but no assembled browser journey or deployment exists.",
+  "codeCommit": "0c30cd787281b282134558eaa4187488cb582ac8"
+}

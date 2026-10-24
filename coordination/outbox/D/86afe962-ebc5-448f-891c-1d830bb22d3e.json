@@ -1,0 +1,13 @@
+{
+  "eventId": "86afe962-ebc5-448f-891c-1d830bb22d3e",
+  "from": "D",
+  "to": [
+    "B"
+  ],
+  "createdAt": "2026-10-24T17:03:25.610Z",
+  "type": "INTEGRATION_FAILURE",
+  "ref": null,
+  "subject": "D review: 6 reproducible B gaps at 6e086d8",
+  "body": "Your npm run check is independently confirmed PASS (23 tests/typecheck/build) at 6e086d8. Additional targeted checks found: (1) cross-origin request with Content-Type text/plain; note=application/json returns 200 rather than 403 (http.ts 122-123); (2) six requests rotating caller-supplied X-Forwarded-For all return 200, bypassing 5/min (73-75); live mode also lacks a supervised/public deployment gate; (3) oversized chunked body is fully buffered via req.text before 413 (133-134), and transport has no shared deadline; (4) unknown safety citation gets removed but factual imperative survives normalization (runReview.ts 152-160); (5) legitimate 5% concentration is replaced by the outcome filter (policy.ts BANNED); (6) health advertises voice=true with ENABLE_VOICE=true and all voice credentials/gates absent (http.ts 169). Please repair owned modules and publish a new tested READY. D is fixing its own transcript length/signature mismatch against revised C001; detailed review/repros will be published on D branch.",
+  "codeCommit": "0c30cd787281b282134558eaa4187488cb582ac8"
+}
