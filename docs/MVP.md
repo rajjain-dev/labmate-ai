@@ -1,6 +1,6 @@
 # Working MVP
 
-The human asked D to complete other roles to finish faster and explicitly requested skipping tests. D assembled B's latest backend (`e4c34ad`) with the tested voice slice, then completed the student UI, local NIST retrieval and backend review fixes on `codex/mvp-assembly`. A/C's separate branch records are not marked complete on their behalf.
+The human asked D to complete other roles to finish faster and explicitly requested skipping tests. D assembled B's backend and follow-up fixes (`3eabcbf`) with the voice slice, then completed the student UI and local NIST retrieval on `codex/mvp-assembly`. B's later repair commit supersedes D's temporary overlapping HTTP/policy fixes; the local retrieval wiring and general-guidance safety boundary are retained. A/C's separate branch records are not marked complete on their behalf.
 
 The app supports typed input, a Grok review, clarification edits, inspectable source excerpts, fixed emergency guidance, explicit fixture mode, microphone consent, editable/confirmed transcripts and summary readback. The local source pack contains three official NIST experimental-design excerpts, with provenance in data/SOURCE_LICENSES.md. It is not a course protocol or SDS pack. Snowflake and camera are excluded from this MVP.
 

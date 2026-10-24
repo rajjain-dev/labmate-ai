@@ -1,5 +1,7 @@
 # Role contribution review
 
+Historical review snapshot. B subsequently published repair commit `3eabcbf`, now included in the assembled MVP together with D's UI/local evidence work. The remaining-work list below describes the earlier review, not current MVP readiness. See `docs/MVP.md` and `docs/STATUS.md` for delivery state. The human requested skipping further test suites during MVP assembly.
+
 Reviewer: D. Snapshot: October 24, 2026, approximately 1:05 PM America/New_York. This review uses fetched remote branches, exact READY code, independent checks, and an isolated B+D integration checkout. Unpublished local work on teammates' computers is outside this review.
 
 ## Published work and verification

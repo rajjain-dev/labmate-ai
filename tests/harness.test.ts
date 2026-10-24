@@ -55,6 +55,7 @@ function deps(gen: GenerateFn | null, ret: RetrieveFn | null = async () => ({ pr
   return { d, calls };
 }
 const opts = { corpusVersion: "demo-v1" };
+const LIVE_GATE = { REVIEW_SUPERVISED_DEMO: "true", REVIEW_MAX_PROVIDER_CALLS: "10" };
 
 test("fixtures are contract valid", () => {
   for (const r of [waterReq, emergencyReq, oosReq]) assert.ok(ReviewRequestSchema.safeParse(r).success);
@@ -257,10 +258,18 @@ test("HTTP: error codes 400, 413, 415, 422, 429, 503", async () => {
 });
 
 test("HTTP: health is sanitized", async () => {
-  const res = handleHealth({ APP_MODE: "live", XAI_API_KEY: "secret-key", XAI_MODEL: "grok-x" });
+  const res = handleHealth({ APP_MODE: "live", XAI_API_KEY: "secret-key", XAI_MODEL: "grok-x", ...LIVE_GATE });
   const text = await res.text();
   assert.doesNotMatch(text, /secret-key|grok-x/);
   assert.equal(JSON.parse(text).capabilities.review, "live");
+});
+
+test("HTTP: health reports live review only when the supervised gate and cap are set", async () => {
+  const keys = { APP_MODE: "live", XAI_API_KEY: "k", XAI_MODEL: "m" };
+  assert.equal((await handleHealth(keys).json()).capabilities.review, "unconfigured");
+  assert.equal((await handleHealth({ ...keys, REVIEW_SUPERVISED_DEMO: "true", REVIEW_MAX_PROVIDER_CALLS: "0" }).json()).capabilities.review, "unconfigured");
+  assert.equal((await handleHealth({ ...keys, REVIEW_SUPERVISED_DEMO: "true", REVIEW_MAX_PROVIDER_CALLS: "500" }).json()).capabilities.review, "unconfigured");
+  assert.equal((await handleHealth({ ...keys, ...LIVE_GATE }).json()).capabilities.review, "live");
 });
 
 test("C001 error schema accepts D's voice route error bodies", () => {
@@ -437,4 +446,162 @@ test("HTTP: APP_ORIGIN pins the allowed origin; malformed APP_ORIGIN fails close
   assert.equal((await handleReviewPost(post(body, { origin: "http://localhost" }), { config: pinned })).status, 403);
   const broken = readConfig({ APP_MODE: "fixture", APP_ORIGIN: "not a url" });
   assert.equal((await handleReviewPost(post(body, { origin: "http://localhost" }), { config: broken })).status, 503);
+});
+
+// --- Repairs for D's review 86afe962 (R1-R6). D's original reproductions live in tests/integration/d-review-audit.test.ts.
+const chunked = (bytes: number, chunk = 4096) => {
+  let sent = 0;
+  let cancelled = false;
+  const body = new ReadableStream<Uint8Array>({
+    pull(c) {
+      if (sent >= bytes) return c.close();
+      const n = Math.min(chunk, bytes - sent);
+      sent += n;
+      c.enqueue(new Uint8Array(n).fill(0x20));
+    },
+    cancel() {
+      cancelled = true;
+    },
+  });
+  return { body, state: () => ({ sent, cancelled }) };
+};
+
+test("R2: media type is compared exactly, with or without an Origin header", async () => {
+  _resetRateLimit();
+  const cfg = readConfig({ APP_MODE: "fixture" });
+  const body = JSON.stringify(waterReq);
+  assert.equal((await handleReviewPost(post(body, { "content-type": "text/plain; note=application/json" }), { config: cfg })).status, 415);
+  assert.equal((await handleReviewPost(post(body, { "content-type": "application/jsonx" }), { config: cfg })).status, 415);
+  assert.equal((await handleReviewPost(post(body, { "content-type": "Application/JSON; charset=utf-8" }), { config: cfg })).status, 200);
+});
+
+test("R3: forwarded headers are ignored unless the deployment names a trusted client IP header", async () => {
+  _resetRateLimit();
+  const body = JSON.stringify(waterReq);
+  const trusted = readConfig({ APP_MODE: "fixture", CLIENT_IP_HEADER: "do-connecting-ip" });
+  // Rotating X-Forwarded-For under a trusted-header config still lands in one shared bucket.
+  const xff = [];
+  for (let i = 0; i < 6; i++) xff.push((await handleReviewPost(post(body, { "x-forwarded-for": `203.0.113.${i}` }), { config: trusted })).status);
+  assert.deepEqual(xff, [200, 200, 200, 200, 200, 429]);
+  // Distinct trusted identities get their own 5/min budget...
+  _resetRateLimit();
+  for (let i = 0; i < 5; i++) assert.equal((await handleReviewPost(post(body, { "do-connecting-ip": "198.51.100.1" }), { config: trusted })).status, 200);
+  assert.equal((await handleReviewPost(post(body, { "do-connecting-ip": "198.51.100.1" }), { config: trusted })).status, 429);
+  // ...but a process-wide budget (20/min) caps the total regardless of identities presented.
+  const statuses = [];
+  for (let i = 2; i < 30; i++) statuses.push((await handleReviewPost(post(body, { "do-connecting-ip": `198.51.100.${i}` }), { config: trusted })).status);
+  assert.equal(statuses.filter((x) => x === 200).length, 15);
+  assert.equal(statuses.at(-1), 429);
+});
+
+test("R3: live review is off unless the supervised gate is set; the provider-call cap is enforced", async () => {
+  _resetRateLimit();
+  const body = JSON.stringify(waterReq);
+  const ungated = readConfig({ APP_MODE: "live" });
+  const a = deps(async () => ({ text: modelJson(), model: "m" }));
+  const r1 = await handleReviewPost(post(body), { config: ungated, deps: a.d });
+  assert.equal(r1.status, 503);
+  assert.equal(a.calls.generate, 0);
+  // Deterministic emergency guidance still works without the gate, with zero model calls.
+  const em = await handleReviewPost(post(JSON.stringify(emergencyReq)), { config: ungated, deps: a.d });
+  assert.equal((await em.json()).state, "emergency");
+  assert.equal(a.calls.generate, 0);
+
+  _resetRateLimit();
+  const capped = readConfig({ APP_MODE: "live", REVIEW_SUPERVISED_DEMO: "true", REVIEW_MAX_PROVIDER_CALLS: "1" });
+  const b = deps(async () => ({ text: modelJson(), model: "m" }));
+  assert.equal((await handleReviewPost(post(body), { config: capped, deps: b.d })).status, 200);
+  const over = await handleReviewPost(post(body), { config: capped, deps: b.d });
+  assert.equal(over.status, 503);
+  assert.match((await over.json()).error.message, /allowance is exhausted/);
+  assert.equal(b.calls.generate, 1);
+});
+
+test("R4: chunked bodies are bounded while streaming; a valid chunked body still works", async () => {
+  _resetRateLimit();
+  const cfg = readConfig({ APP_MODE: "fixture" });
+  const big = chunked(1024 * 1024);
+  const res = await handleReviewPost(
+    new Request("http://localhost/api/review", { method: "POST", headers: { "content-type": "application/json" }, body: big.body, duplex: "half" } as RequestInit),
+    { config: cfg },
+  );
+  assert.equal(res.status, 413);
+  assert.ok(big.state().cancelled);
+  assert.ok(big.state().sent < 64 * 1024, `read ${big.state().sent} bytes`);
+
+  const bytes = new TextEncoder().encode(JSON.stringify(waterReq));
+  const ok = new ReadableStream<Uint8Array>({
+    start(c) {
+      for (let i = 0; i < bytes.length; i += 100) c.enqueue(bytes.slice(i, i + 100));
+      c.close();
+    },
+  });
+  const res2 = await handleReviewPost(
+    new Request("http://localhost/api/review", { method: "POST", headers: { "content-type": "application/json" }, body: ok, duplex: "half" } as RequestInit),
+    { config: cfg },
+  );
+  assert.equal(res2.status, 200);
+});
+
+test("R4: an aborted upload maps to TIMEOUT and releases its slot", async () => {
+  _resetRateLimit();
+  const cfg = readConfig({ APP_MODE: "fixture" });
+  const ac = new AbortController();
+  const stalled = new ReadableStream<Uint8Array>({ pull: () => new Promise(() => {}) });
+  const pending = handleReviewPost(
+    new Request("http://localhost/api/review", { method: "POST", headers: { "content-type": "application/json" }, body: stalled, duplex: "half", signal: ac.signal } as RequestInit),
+    { config: cfg },
+  );
+  setTimeout(() => ac.abort(), 20);
+  const res = await pending;
+  assert.equal(res.status, 504);
+  assert.equal((await res.json()).error.code, "TIMEOUT");
+  for (let i = 0; i < 2; i++) assert.equal((await handleReviewPost(post(JSON.stringify(waterReq)), { config: cfg })).status, 200);
+});
+
+test("R1: every safety finding without a valid source is rewritten as uncertainty plus a supervisor question", async () => {
+  const { d } = deps(async () => ({
+    text: modelJson({
+      findings: [
+        { category: "safety", severity: "info", title: "Wear a respirator", explanation: "Always wear a respirator for sugar.", nextStep: "Put on a respirator.", evidence: "reasoned", sourceIds: [] },
+        { category: "safety", severity: "caution", title: "Hot liquid", explanation: "Handle hot liquid as your instructor directs.", nextStep: "Confirm hot liquid handling.", evidence: "source_backed", sourceIds: ["gen-001"] },
+        { category: "scientific", severity: "caution", title: "Volume", explanation: "Volumes differ.", nextStep: "Record volumes.", evidence: "reasoned", sourceIds: [] },
+      ],
+    }),
+    model: "m",
+  }));
+  const r = await runReview(waterReq, d, opts);
+  const [unsourced, sourced, sci] = r.findings;
+  assert.doesNotMatch(unsourced.explanation + unsourced.nextStep, /respirator/i);
+  assert.match(unsourced.title, /^Unverified safety point:/);
+  assert.match(unsourced.nextStep, /Ask your lab supervisor or TA/);
+  assert.equal(sourced.explanation, "Handle hot liquid as your instructor directs.");
+  assert.deepEqual(sourced.sourceIds, ["gen-001"]);
+  assert.equal(sci.explanation, "Volumes differ.");
+  assert.ok(r.meta.warnings.some((w) => /without an approved source/.test(w)));
+});
+
+test("R6: health voice capability follows D's voice runtime gates", async () => {
+  const voice = async (env: Record<string, string>) => (await handleHealth(env).json()).capabilities.voice;
+  const full = {
+    APP_MODE: "live", ENABLE_VOICE: "true", VOICE_SUPERVISED_DEMO: "true", VOICE_MAX_PROVIDER_CALLS: "20",
+    ELEVENLABS_API_KEY: "k", ELEVENLABS_STT_MODEL: "s", ELEVENLABS_TTS_MODEL: "t", ELEVENLABS_VOICE_ID: "v",
+  };
+  assert.equal(await voice(full), true);
+  assert.equal(await voice({ ...full, ENABLE_VOICE: "false" }), false);
+  assert.equal(await voice({ ...full, VOICE_SUPERVISED_DEMO: "false" }), false);
+  assert.equal(await voice({ ...full, VOICE_MAX_PROVIDER_CALLS: "0" }), false);
+  assert.equal(await voice({ ...full, VOICE_MAX_PROVIDER_CALLS: "101" }), false);
+  assert.equal(await voice({ ...full, ELEVENLABS_VOICE_ID: " " }), false);
+  assert.equal(await voice({ APP_MODE: "fixture", ENABLE_VOICE: "true" }), true);
+  assert.equal(await voice({ ENABLE_VOICE: "true" }), false);
+});
+
+test("R5: outcome estimates are filtered while scientific percentages survive", () => {
+  for (const t of ["This has a 92% chance of success.", "I am 90% sure this works.", "The probability of success is about 70%.", "It works 90% of the time."]) {
+    assert.doesNotMatch(applyLanguagePolicy(t).text, /\d\s?%/, t);
+  }
+  for (const t of ["Confirm the stated 5% concentration with your TA.", "Use a 10% w/v sucrose solution.", "Report the 95% confidence interval.", "A 0.9% saline solution."]) {
+    assert.equal(applyLanguagePolicy(t).text, t);
+  }
 });

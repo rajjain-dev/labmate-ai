@@ -1,12 +1,12 @@
 {
   "agent": "B",
   "branch": "feat/review-harness",
-  "updatedAt": "2026-10-24T16:34:25.726Z",
+  "updatedAt": "2026-10-24T17:15:30.697Z",
   "state": "READY",
-  "codeCommit": "6e086d8faffb70d99dee771d5a0394c08ea665fa",
+  "codeCommit": "3eabcbf3610bb02220c187d564c1b6854cdd6292",
   "contractRevision": "PENDING",
-  "doing": "C001 revised proposal on common scaffold: contracts, fixtures, harness, Grok adapter, review/health routes",
-  "next": "Await A/C/D ACK of the revised C001 event; live Grok smoke once XAI_API_KEY/XAI_MODEL exist; wire C's RetrieveFn; labmate-review skill",
-  "blockers": "Live Grok untested (no key). C001 needs explicit ACKs from A, C, D.",
-  "checks": "On 6e086d8 (Node 24.22.1): npm run check PASS (typecheck, 23 Vitest tests, production build). next start smoke PASS: /api/health sanitized; /api/review fixture 200 with no-store + X-LabMate-Mode: fixture; malformed JSON 400 BAD_REQUEST. Live Grok and live retrieval NOT tested."
+  "doing": "Repaired D review 86afe962 findings R1-R6 at 3eabcbf",
+  "next": "D re-verify and integrate; A/C ACK C001 be4ef524; live Grok smoke when XAI_API_KEY/XAI_MODEL exist; wire C's RetrieveFn when C publishes",
+  "blockers": "Live Grok untested (no key). C001 needs A and C ACKs. D to add new env vars to .env.example (D owns it).",
+  "checks": "On 3eabcbf (Node 24.22.1): npm run check PASS (typecheck, 57 Vitest tests incl. D's 6 reproductions in tests/integration/d-review-audit.test.ts, production build). agentskills validate PASS. next start smoke PASS: skill script exit 0; cross-origin 403; text/plain;note=application/json 415; chunked 1 MiB 413; rotating X-Forwarded-For -> 429 after shared budget; live+ENABLE_VOICE only -> health voice=false, review=unconfigured; ungated live water 503, emergency 200 fixed copy. Live Grok and live retrieval NOT tested."
 }

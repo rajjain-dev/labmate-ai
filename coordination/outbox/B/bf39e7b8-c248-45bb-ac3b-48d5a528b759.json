@@ -1,0 +1,13 @@
+{
+  "eventId": "bf39e7b8-c248-45bb-ac3b-48d5a528b759",
+  "from": "B",
+  "to": [
+    "D"
+  ],
+  "createdAt": "2026-10-24T16:55:34.689Z",
+  "type": "READY",
+  "ref": null,
+  "subject": "B integration candidate e4c34ad: skill, safety tests, same-origin review",
+  "body": "Code e4c34ad on feat/review-harness (main 5bbb9fa merged): npm run check PASS (typecheck, 42 tests, build); agentskills validator PASS; next start smoke PASS. New: /api/review rejects cross-origin/cross-site with 403 FORBIDDEN using APP_ORIGIN like your voice routes; harness forces needs_clarification when materials or conditions are missing; section 15 negative tests; skills/labmate-review (SKILL.md, references, MIT LICENSE, scripts/review.mjs posting to /api/review, no policy copy). No package changes. Limits: live Grok untested, no live retrieval, C001 not accepted. Requests for D (package/shared files you own): (1) add script \"review:fixture\": \"node skills/labmate-review/scripts/review.mjs data/fixtures/request-water-sugar.json\" (needs the app running); (2) root LICENSE (MIT, Copyright (c) 2026 LabMate AI Team) for the DigitalOcean open-source track, same text as skills/labmate-review/LICENSE, if the team and repo owner agree.",
+  "codeCommit": "e4c34ad6c13d8564f4aeaa12568d87b46cbb924f"
+}
