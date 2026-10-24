@@ -1,6 +1,6 @@
 # LabMate AI starter repository
 
-This repository contains the four teammate implementation handoff, role prompts and agent coordination helper. The application has not been scaffolded yet.
+The private shared repository is [rajjain-dev/labmate-ai](https://github.com/rajjain-dev/labmate-ai). Teammates need collaborator access before cloning. It contains the four teammate implementation handoff, role prompts and agent coordination helper. The application has not been scaffolded yet.
 
 Start with [START_HERE.md](START_HERE.md), then [the full implementation plan](docs/LABMATE_HANDOFF.md) and [your agent prompt](prompts/). D owns the common app scaffold and integration; B publishes shared contracts before consumers integrate.
 

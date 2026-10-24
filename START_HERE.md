@@ -1,6 +1,6 @@
 # Start working on LabMate AI
 
-The handoff describes the project; the coordination kit provides development instructions and a communication helper. Neither contains a finished LabMate app. A local starter repository is available in the labmate-ai folder alongside this guide. A shared GitHub URL must be created or supplied before the four agents can exchange updates across computers.
+The shared repository is [rajjain-dev/labmate-ai](https://github.com/rajjain-dev/labmate-ai). It is private. The handoff describes the project; the coordination kit provides development instructions and a communication helper. The LabMate application has not been built yet.
 
 ## Share the handoff now
 
@@ -8,7 +8,7 @@ The handoff describes the project; the coordination kit provides development ins
 2. Send the downloaded ZIP as a file attachment through your usual team chat, email or shared drive. A local file link from this chat is not a public download link your friend can use.
 3. Agree which teammate owns A, B, C and D. Give each person a different role.
 4. Your friend extracts the ZIP, reads README.md, then opens the coordination-kit folder in their coding workspace. The full specification is docs/LABMATE_HANDOFF.md. The matching startup instruction is prompts/A.md, B.md, C.md or D.md.
-5. Until a shared remote and common scaffold exist, work on independent preparation and report progress through the brainstorming document or team chat. Do not pretend the Git helper is connected or that the app is runnable.
+5. For coding and agent communication, use the shared repository rather than separate unconnected copies of the ZIP. The ZIP remains useful for reading the handoff. Until the common application scaffold exists, start the independent preparation below and keep application readiness claims accurate.
 
 ## What each teammate can start immediately
 
@@ -19,11 +19,11 @@ The handoff describes the project; the coordination kit provides development ins
 
 The fourth person is the integration owner, not the person who rewrites everyone else's module. Owners fix their own integration failures.
 
-## Once the shared GitHub repository exists
+## Join the shared GitHub repository
 
-The repository owner shares its actual URL and gives all four teammates access. For a private repository, friends must accept their collaborator invitations before cloning. Credentials stay in each person's local environment; never put keys in the repository or brainstorming document.
+The owner invites each teammate with write access. Friends must accept their collaborator invitations before cloning this private repository. Send the owner your GitHub username; sharing the URL alone does not grant access. Credentials stay in each person's local environment; never put keys in the repository or brainstorming document.
 
-Each teammate clones the same repository into their own folder, creates their assigned branch from the agreed main baseline, and starts the corresponding role prompt. Use one clone per laptop or one worktree per agent. The roster names are:
+Each teammate clones the repository into their own folder, checks out their assigned branch, and starts the corresponding role prompt. Use one clone per laptop or one worktree per agent. The four initial branches are published from the same starter baseline. The roster names are:
 
 | Role | Branch |
 | --- | --- |
@@ -32,7 +32,16 @@ Each teammate clones the same repository into their own folder, creates their as
 | C | feat/evidence |
 | D | feat/voice-integration |
 
-Use the actual repository URL in the clone command; no working GitHub URL is implied by this guide. If D has already published your role branch, check out that branch instead of creating a competing one.
+For example, after accepting the invite, teammate A runs:
+
+```sh
+git clone https://github.com/rajjain-dev/labmate-ai.git
+cd labmate-ai
+git switch feat/student-ui
+node scripts/coord.mjs read --id A --fetch
+```
+
+Use the matching branch and ID for B, C or D. A current supported Node LTS and Git are required. The communication helper needs no npm install. Open this cloned project folder in your coding workspace and paste the matching file from prompts/ into the agent.
 
 After cloning and selecting your branch, read AGENTS.md and docs/LABMATE_HANDOFF.md, then run the coordination read command with your own ID. Missing peer branches mean those owners have not published yet; they are not evidence of completed work. Follow coordination/PROTOCOL.md to commit and push your own progress and messages. D merges tested slices into main and verifies the assembled and deployed build.
 
@@ -40,4 +49,4 @@ There is no package.json or runnable application in this starter yet. Do not run
 
 ## Starter message for your friend
 
-I sent you the LabMate AI team pack. Your role is [A, B, C or D — choose one before sending]. Extract it and read README.md, then coordination-kit/docs/LABMATE_HANDOFF.md and your matching file in coordination-kit/prompts/. Start with the independent preparation listed in START_HERE.md while we establish the shared repository and application scaffold. Once I send the GitHub URL and access is ready, clone that repository and continue on your assigned branch. Our Google Doc is for brainstorming; accepted build changes and agent status go into the repository.
+Our private repository is https://github.com/rajjain-dev/labmate-ai. Send me your GitHub username so I can invite you. Your role is [A, B, C or D — choose one before sending]. After accepting the invite, clone the repo, open START_HERE.md, and paste your matching prompts/ file into your coding agent. The full plan is docs/LABMATE_HANDOFF.md. You can start independent preparation immediately; D publishes the common application scaffold before the modules integrate. Our Google Doc is for brainstorming; accepted build changes and agent status go into the repository.
