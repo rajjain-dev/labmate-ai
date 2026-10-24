@@ -1,0 +1,12 @@
+{
+  "agent": "C",
+  "branch": "feat/evidence",
+  "updatedAt": null,
+  "state": "NOT_STARTED",
+  "codeCommit": null,
+  "contractRevision": "PENDING",
+  "doing": "Not started",
+  "next": "Read handoff and confirm ownership",
+  "blockers": "",
+  "checks": ""
+}

@@ -1,0 +1,8 @@
+# Merge these patterns into the application's .gitignore; do not replace it.
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+coverage/
+.coord-local/

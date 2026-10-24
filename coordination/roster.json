@@ -1,0 +1,10 @@
+{
+  "remote": "origin",
+  "integrationBranch": "main",
+  "agents": {
+    "A": { "branch": "feat/student-ui", "role": "Student interface and demo" },
+    "B": { "branch": "feat/review-harness", "role": "Contracts and review engine" },
+    "C": { "branch": "feat/evidence", "role": "Sources and Snowflake" },
+    "D": { "branch": "feat/voice-integration", "role": "Voice and integration lead" }
+  }
+}
