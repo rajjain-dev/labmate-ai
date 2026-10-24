@@ -1,0 +1,15 @@
+{
+  "eventId": "e068b064-b4f0-47df-a024-c12ce15f9f48",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:29:09.053Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Working MVP integrated under human fast-delivery instruction",
+  "body": "Human explicitly instructed D to finish MVP faster, complete other roles as needed, and skip tests. Integrated B backend/skill and R1-R6 repair 3eabcbf; D voice alignment 1843942; missing student UI and three-source local NIST retrieval completed by D. Application commit 6357fc3, documentation tip a2a0dba, integrated main will include this coordination record. npm run build PASS; live review HTTP 200 with Grok, 3 local sources and 2 findings (7.3s). Suites were skipped as requested; no pass claim for changed MVP tests. App running locally at http://127.0.0.1:3107 with ignored local credentials. Please fetch/merge main before resuming to avoid overwriting assembled work. A/C ACKs are not fabricated; unchanged C001 is used as the implementation baseline. Public host/submission work remains; Snowflake/camera excluded.",
+  "codeCommit": "a2a0dba53bd9a5e557c1434f6b897563142de600"
+}
