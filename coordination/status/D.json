@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T18:49:33.436Z",
+  "updatedAt": "2026-10-24T19:12:40.787Z",
   "state": "MERGED",
-  "codeCommit": "e0528e3a534c126f678ab3e6c24c6d0de773d5c0",
-  "contractRevision": "C002",
-  "doing": "Integrated Sable as the selected frontend: one Talk/End button, an animated awake companion, optional typing and a smaller chat panel that minimizes without stopping voice.",
-  "next": "Human spoken conversation trial in Sable at localhost:3108; finish hackathon demo and submission materials.",
-  "blockers": "Full microphone/pause-detection loop remains unverified by the agent. Public live hosting requires shared limits. Suites skipped by human request.",
-  "checks": "e0528e3: npm run build PASS including TypeScript and standalone package. Separate browser synthetic 2-page PDF upload/render PASS; optional typing returned live source-grounded answer; page-2 citation opened page 2 and conversation history persisted. Awake image and panel rendered correctly. Suites SKIPPED; no human microphone end-to-end pass claimed. Prior live STT/TTS checks are recorded in docs/SABLE_INTEGRATION.md."
+  "codeCommit": "88a289ac797f9320028a1bdb0a5cdd3056b48ab4",
+  "contractRevision": "C003",
+  "doing": "Delivered Sable: upload starts safety notes/warnings, then key points and conversational Q&A. Upload is higher on a one-screen landing; controls are at least 44px and the PDF/chat layout is responsive.",
+  "next": "Human microphone trial in the opened Sable app at localhost:3108; finish hackathon submission.",
+  "blockers": "Full human microphone/pause-detection loop is not claimed. Public live hosting requires shared limits. Test suites intentionally skipped.",
+  "checks": "88a289ac797f9320028a1bdb0a5cdd3056b48ab4: npm run build PASS including TypeScript and standalone packaging. No landing overflow at 1280x720, 390x844, 320x568. Phone document controls >=44x44px; zoom and page navigation PASS. Browser upload automatically opened safety-first briefing; no full mic trial. Final live PDF/Grok/TTS HTTP200, 3 grounded safety quotes, 0 repeated quote lines, 633251 MP3 bytes. Suites SKIPPED by human request."
 }

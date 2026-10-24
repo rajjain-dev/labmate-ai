@@ -1,10 +1,10 @@
 # Integrated MVP status
 
-Current frontend: the human selected Sable as the integration direction. It runs on http://127.0.0.1:3108 with one Talk/End conversation button, an animated awake companion, optional typing and a panel that minimizes without ending voice. See [SABLE_INTEGRATION.md](SABLE_INTEGRATION.md) for actual build, browser and live provider checks. The separate uncommitted LabMate animation is preserved in its own checkout on port 3107.
+Current frontend: the human selected Sable as the integration direction. It runs on http://127.0.0.1:3108. Upload starts verified safety notes and warnings, then key points, then spoken Q&A. The higher upload action fits one screen; controls and text have consistent responsive sizes. The animated companion, optional typing and panel minimization remain integrated. See [SABLE_INTEGRATION.md](SABLE_INTEGRATION.md) for actual checks. The separate uncommitted LabMate animation is preserved in its own checkout on port 3107.
 
 Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coordination/status/D.json.
 
-- Current experience: upload a selectable-text lab PDF, start voice, hear the overview and exact handout precaution quotes, then ask ongoing questions. Voice is primary; typing is optional. No app checkboxes, grading, or transcript-confirmation gate.
+- Current experience: upload a selectable-text lab PDF; hear source-verified safety notes and warnings first, then key points, then ask ongoing questions. Voice starts automatically; browser microphone permission follows the opening. Typing is optional. No app checkboxes, grading, or transcript-confirmation gate.
 - Voice character: the human chose the first cheerier preview, saved as the custom ElevenLabs voice “LabMate - Bright Companion,” replacing the earlier subdued voice. The selected bright, playful, neutral-sounding voice is configured locally for all briefings and answers; its fixed greeting was regenerated.
 - Human authority: D may complete other roles, skip test suites, remove confirmation, and implement the uploaded-handout conversation. C002 records this direction without fabricated peer ACKs.
 - Production compilation: npm run build PASS, including TypeScript, standalone package and PDF worker. Final release evidence is recorded with the code commit.

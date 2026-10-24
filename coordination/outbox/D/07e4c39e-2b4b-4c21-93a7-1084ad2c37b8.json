@@ -1,0 +1,15 @@
+{
+  "eventId": "07e4c39e-2b4b-4c21-93a7-1084ad2c37b8",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T19:12:40.886Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Sable automatic safety-first release and responsive controls complete",
+  "body": "Final application code 88a289ac797f9320028a1bdb0a5cdd3056b48ab4 is integrated into local main. Upload now automatically starts Sable: exact handout safety notes/warnings, key points, then questions. Browser mic permission comes after the opening. Buttons/text/interface sizes were fixed, upload moved beneath the introduction, and the landing fits one screen at desktop and compact phone sizes. Build/TypeScript PASS; live PDF, grounded brief and speech all HTTP200; 3 exact safety quotes, no repeated quote lines, 633251 MP3 bytes. Browser auto-start, zoom and navigation observed. Suites skipped as requested; no complete human mic-loop pass claimed. App opened for the human at localhost:3108. Existing LabMate animation remains isolated/uncommitted.",
+  "codeCommit": "88a289ac797f9320028a1bdb0a5cdd3056b48ab4"
+}
