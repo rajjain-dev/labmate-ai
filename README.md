@@ -1,6 +1,6 @@
 # SABLE
 
-The Sable frontend from the exported Lovable app, connected to LabMate’s existing document-grounded Grok and ElevenLabs voice agent. Upload a handout, tap SABLE’s microphone for a briefing, then ask questions between spoken answers. The log also accepts typed questions and opens cited handout pages. There are no app checkboxes or transcript-confirmation screens.
+The Sable frontend from the exported Lovable app, connected to LabMate’s existing document-grounded Grok and ElevenLabs voice agent. Upload a handout: Sable automatically reads the handout’s safety notes and warnings, gives the key points, then listens for your questions. The primary button ends or resumes voice. The log also accepts optional typed questions and opens cited handout pages. There are no app checkboxes or transcript-confirmation screens.
 
 Use Node 24: npm ci, copy .env.example to .env.local, then `npm run dev -- --hostname 127.0.0.1 --port 3108`. For a standalone build use npm run build and provide runtime environment variables; locally, `HOSTNAME=127.0.0.1 PORT=3108 node --env-file=.env.local .next/standalone/server.js`. The dev/build hooks prepare the local PDF viewer worker automatically. Never commit credentials.
 

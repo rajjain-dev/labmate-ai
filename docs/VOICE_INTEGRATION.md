@@ -1,5 +1,7 @@
 # Conversational voice integration
 
+The current Sable frontend automatically begins after handout upload: verified safety notes and warnings first, key points next, then spoken questions. The upload gesture unlocks playback, and microphone permission is requested after the opening. See docs/SABLE_INTEGRATION.md for the current interface; the manual-start flow below describes the shared engine’s earlier LabMate presentation.
+
 The human requested a conversation as the primary experience, with optional typing and no app checkboxes or transcript confirmation. This replaces the original C001 confirmation workflow under direct human direction; see coordination/DECISIONS.md (C002).
 
 Upload a selectable-text lab PDF, then press Start conversation. LabMate generates a short overview, reads precautions quoted from the handout, and starts listening. A 2.2-second pause after speech ends a turn; ElevenLabs transcribes it, Grok answers using the handout and recent conversation, and ElevenLabs speaks the answer. The next listening turn starts automatically. End conversation or say “stop listening” to finish. Switching away from the page also ends the session. Typing is available under Type instead after ending voice.
