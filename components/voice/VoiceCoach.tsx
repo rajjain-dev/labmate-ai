@@ -145,8 +145,8 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
     // Deferring one task lets the handout's history reset settle, and avoids
     // starting during React development mode's effect replay.
     const timer = setTimeout(() => {
-      if (controller.current) return;
       automaticStart.current = autoStartSignal;
+      if (controller.current) return;
       void start();
     }, 0);
     return () => clearTimeout(timer);
