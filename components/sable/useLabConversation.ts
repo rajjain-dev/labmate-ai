@@ -9,11 +9,15 @@ export type Message =
   | { id: string; role: "assistant"; reply: ConversationReply; opening: boolean };
 
 export function spokenReply(reply: ConversationReply, opening = false): string {
+  const onlineSafety = reply.webSources.filter(source => source.kind === "precaution");
   if (opening) return [
     reply.mode === "fixture" ? "Sample mode." : "",
     "Hi, I’m Sable. Let’s go over some key safety things first.",
     ...(reply.precautions.length ? ["Your handout gives these precautions and warnings.", ...reply.precautions.map(item => item.quote)]
-      : ["I couldn’t verify any safety notes in this handout. Ask your TA which precautions apply before beginning."]),
+      : ["The handout doesn’t give verifiable safety notes."]),
+    ...(onlineSafety.length ? ["I also checked reliable online references. These are general precautions to check with your TA.", ...onlineSafety.map(source => source.quote)] : []),
+    !reply.precautions.length && !onlineSafety.length ? "I couldn’t verify applicable precautions. Ask your TA before beginning." : "",
+    ["unavailable", "no_sources"].includes(reply.researchStatus) ? "I couldn’t verify additional web guidance this time." : "",
     "Now, the key points.",
     reply.answer,
     "What would you like to know? You can ask me anything about your experiment.",
@@ -85,8 +89,8 @@ export function useLabConversation(lab: LabDocument | null) {
     try {
       const response = await fetch("/api/conversation", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lab, opening, message, history: history.current.slice(-12) }),
-        signal: AbortSignal.any([abort.signal, AbortSignal.timeout(27_000)]),
+        body: JSON.stringify({ lab, opening, message, webResearch: true, history: history.current.slice(-12) }),
+        signal: AbortSignal.any([abort.signal, AbortSignal.timeout(38_000)]),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error?.message || "I couldn’t answer that. Please try again.");
@@ -94,7 +98,7 @@ export function useLabConversation(lab: LabDocument | null) {
       if (!parsed.success) throw new Error("I couldn’t read that answer. Please ask again.");
       if (token !== sequence.current) return;
       const reply = parsed.data;
-      const content = [reply.answer, ...reply.precautions.map(item => item.quote)].join("\n").slice(0, 2500);
+      const content = [reply.answer, ...reply.precautions.map(item => item.quote), ...reply.webSources.map(source => `${source.title}: ${source.quote}`)].join("\n").slice(0, 2500);
       history.current = [...history.current, ...(message ? [{ role: "user" as const, content: message.slice(0, 2500) }] : []), { role: "assistant" as const, content }].slice(-12);
       if (opening) briefed.current = true;
       setMessages(previous => [...previous, { id: reply.requestId, role: "assistant", reply, opening }]);

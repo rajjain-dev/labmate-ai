@@ -11,13 +11,23 @@ import { SableAvatar } from "./SableAvatar";
 function Reply({ message, onPageChange }: { message: Message; onPageChange: (page: number) => void }) {
   if (message.role === "user") return <article className="rounded-lg bg-secondary/70 p-3"><p className="mb-1 text-xs font-bold text-muted-foreground">YOU</p><p className="whitespace-pre-wrap">{message.text}</p></article>;
   const { reply } = message;
-  const precautions = reply.precautions.length > 0 ? <div className="mt-3"><h3 className="font-bold">{message.opening ? "Safety notes and warnings" : "Precautions from your handout"}</h3><ul className="mt-1 list-disc space-y-2 pl-4">{reply.precautions.map((precaution, index) => <li key={index}>{precaution.quote} <button type="button" onClick={() => onPageChange(precaution.page)} className="font-bold text-primary underline underline-offset-2">p. {precaution.page}</button></li>)}</ul></div> : message.opening ? <p className="my-3 rounded-lg bg-hazard/20 p-3">No safety notes could be verified in this handout. Ask your TA which precautions apply.</p> : null;
+  const precautions = reply.precautions.length > 0 ? <div className="mt-3"><h3 className="font-bold">{message.opening ? "Safety notes and warnings" : "Precautions from your handout"}</h3><ul className="mt-1 list-disc space-y-2 pl-4">{reply.precautions.map((precaution, index) => <li key={index}>{precaution.quote} <button type="button" onClick={() => onPageChange(precaution.page)} className="font-bold text-primary underline underline-offset-2">p. {precaution.page}</button></li>)}</ul></div> : message.opening ? <p className="my-3 rounded-lg bg-hazard/20 p-3">No safety notes could be verified in this handout.{!reply.webSources.some(source => source.kind === "precaution") ? " Ask your TA which precautions apply." : " Online references are listed below."}</p> : null;
+  const webReferences = reply.webSources.length > 0 ? <div className="mt-4 border-t border-border/20 pt-3">
+    <h3 className="font-bold">{message.opening ? "Precautions from online references" : "Online references checked"}</h3>
+    <p className="mt-1 text-sm text-muted-foreground">General guidance. Your course protocol and TA determine what applies.</p>
+    <ul className="mt-2 space-y-3">{reply.webSources.map(source => <li key={source.id} className="sable-web-source rounded-lg bg-secondary/50 p-3">
+      <blockquote>{source.quote}</blockquote>
+      <a href={source.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center font-bold text-primary underline underline-offset-4">{source.title} ↗</a>
+    </li>)}</ul>
+  </div> : ["unavailable", "no_sources"].includes(reply.researchStatus) ? <p className="my-3 rounded-lg bg-secondary/50 p-3 text-sm text-muted-foreground">I couldn’t verify additional web sources this time. This reply uses your handout and conversation.</p> : reply.researchStatus === "disabled" && reply.mode === "live" ? <p className="mt-3 text-sm text-muted-foreground">Web lookup is off. This reply uses your handout and conversation.</p> : null;
   return <article className="rounded-lg border border-border/20 bg-paper/60 p-3">
     <p className="mb-1 text-xs font-bold text-primary">{reply.mode === "fixture" ? "SAMPLE RESPONSE" : message.opening ? "SABLE · YOUR LAB BRIEF" : "SABLE"}</p>
     {message.opening && precautions}
+    {message.opening && webReferences}
     {message.opening && <h3 className="mt-4 mb-2 font-bold">Key points</h3>}
     <p className="whitespace-pre-wrap">{reply.answer}</p>
     {!message.opening && precautions}
+    {!message.opening && webReferences}
     {reply.citations.length > 0 && <div className="mt-2 flex flex-wrap items-center gap-2 text-xs"><span>From your handout:</span>{reply.citations.map(page => <button type="button" key={page} onClick={() => onPageChange(page)} className="font-bold text-primary underline underline-offset-2">p. {page}</button>)}</div>}
   </article>;
 }
@@ -78,9 +88,9 @@ export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, prep
           <button type="button" aria-label="Back to handout" title={active ? "Read your handout while Sable keeps listening" : "Back to handout"} onClick={() => { setOpen(false); setLogOpen(false); }} className="flex shrink-0 items-center gap-1 rounded-full bg-secondary/70 px-2 py-1.5 text-[10px] font-bold text-primary">Handout<ArrowDownRight className="size-3.5" /></button>
         </div>
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-3 pr-1 leading-relaxed">
-          {!messages.length && !thinking && <div className="flex flex-col items-center py-3 text-center"><SableAvatar awake className="!size-24" /><p className="mt-2 max-w-64 text-muted-foreground">{conversation.voiceMode === "disabled" ? "Ask me about your handout below." : "I’ll share your brief and the handout’s precautions, then you can ask me questions out loud."}</p></div>}
+          {!messages.length && !thinking && <div className="flex flex-col items-center py-3 text-center"><SableAvatar awake className="!size-24" /><p className="mt-2 max-w-64 text-muted-foreground">{conversation.voiceMode === "disabled" ? "Ask me about your experiment below." : "I’ll check your handout and online references, share key precautions, then answer your questions out loud."}</p></div>}
           {(logOpen ? messages : messages.slice(-2)).map(message => <Reply key={message.id} message={message} onPageChange={viewPage} />)}
-          {thinking && <p role="status" className="flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 animate-spin" />{messages.length ? "SABLE is thinking…" : "Preparing your brief and the handout’s precautions…"}</p>}
+          {thinking && <p role="status" className="flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 animate-spin" />Checking your handout and reliable web sources…</p>}
           {status && !thinking && <p role="status" className="font-semibold text-primary">{status}</p>}
           {(error || conversation.error) && <p role="alert" className="rounded-lg bg-destructive/10 p-3 text-destructive">{conversation.error || error}</p>}
           {notice && <p role="status" className="text-muted-foreground">{notice}</p>}
@@ -91,7 +101,7 @@ export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, prep
           <textarea id="sable-question" rows={2} maxLength={5000} value={question} onChange={event => setQuestion(event.target.value)} disabled={active || thinking} placeholder={active ? "End the voice conversation to type." : "Type a question for SABLE…"} className="min-w-0 flex-1 resize-none rounded-lg border border-border/30 bg-paper p-2 text-sm disabled:opacity-60" />
           <button type="submit" aria-label="Send question" disabled={active || thinking || !question.trim()} className="cartoon-sm flex size-10 shrink-0 items-center justify-center rounded-full bg-hazard disabled:opacity-40"><Send className="size-4" /></button>
         </form> : <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border/20 pt-3"><span className="text-[11px] text-muted-foreground">{active ? "Pause after a question. I’ll take it from there." : "One tap for your brief, then just ask."}</span><button type="button" onClick={() => { if (active) toggle(); setTyping(true); }} className="shrink-0 text-xs font-bold text-primary underline underline-offset-4">Type instead</button></div>}
-        <p className="mt-2 shrink-0 text-[10px] leading-snug text-muted-foreground">{conversation.voiceMode === "disabled" ? "Voice is unavailable. You can type a question. " : "Voice uses ElevenLabs. "}Handout text and questions go to xAI. This conversation stays in memory.{conversation.mode === "fixture" ? " Sample mode uses canned responses." : ""}</p>
+        <p className="mt-2 shrink-0 text-[10px] leading-snug text-muted-foreground">{conversation.voiceMode === "disabled" ? "Voice is unavailable. You can type a question. " : "Voice uses ElevenLabs. "}Handout text and questions go to xAI. Web searches use public experiment topics. This conversation stays in memory.{conversation.mode === "fixture" ? " Sample mode uses canned responses." : ""}</p>
       </section>}
     </>} />;
 }

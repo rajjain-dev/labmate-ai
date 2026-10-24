@@ -297,6 +297,8 @@
 .sable-conversation article>p:first-child { font-size:12px; letter-spacing:.05em; }
 .sable-conversation article button { display:inline-flex; align-items:center; justify-content:center; padding:5px 10px; border-radius:9px; background:var(--secondary); text-decoration:none; margin:3px; }
 .sable-conversation article>div.text-xs { font-size:13px; }
+.sable-web-source a { min-height:44px; overflow-wrap:anywhere; font-size:14px; line-height:1.5; }
+.sable-web-source a:focus-visible { outline:3px solid var(--ring); outline-offset:4px; border-radius:4px; }
 .sable-conversation textarea { font-size:16px; line-height:1.5; padding:12px; min-height:82px; }
 .sable-conversation form button { width:48px; height:48px; }
 .sable-conversation>p:last-child { font-size:12px; line-height:1.5; margin-top:12px; }
