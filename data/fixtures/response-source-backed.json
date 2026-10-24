@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "requestId": "c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f",
+  "clientRequestId": "d34567ba-2121-4131-8b4b-389e5cbab110",
+  "state": "supervisor_review_required",
+  "summary": "Your comparison needs fixed amounts and temperatures. Hot water handling is a safety question for your supervisor; the cited passage is a placeholder until C publishes the approved corpus.",
+  "missingInformation": ["The two water temperatures and how they will be measured."],
+  "findings": [
+    {
+      "id": "f1",
+      "category": "scientific",
+      "severity": "caution",
+      "title": "Comparison conditions are unspecified",
+      "explanation": "Without fixed water volume and sugar mass, a time difference cannot be attributed to temperature.",
+      "nextStep": "Confirm controlled variables with your TA.",
+      "evidence": "reasoned",
+      "sourceIds": []
+    },
+    {
+      "id": "f2",
+      "category": "safety",
+      "severity": "caution",
+      "title": "Confirm hot water handling at your bench",
+      "explanation": "The cited general guidance asks students to confirm heating and handling procedures with the instructor before using hot liquids.",
+      "nextStep": "Ask your supervisor which heating method and handling precautions apply.",
+      "evidence": "source_backed",
+      "sourceIds": ["FIXTURE-general-guidance-001"]
+    }
+  ],
+  "questionsForTA": ["Which heating method and maximum temperature should I use?"],
+  "sources": [
+    {
+      "sourceId": "FIXTURE-general-guidance-001",
+      "documentId": "FIXTURE-general-guidance",
+      "title": "FIXTURE ONLY - placeholder general lab guidance (not a real source)",
+      "locator": "Section 1",
+      "excerpt": "FIXTURE PLACEHOLDER: Confirm heating and hot liquid handling procedures with your instructor before starting.",
+      "url": null,
+      "sourceKind": "general_guidance",
+      "version": "fixture",
+      "reviewedOn": "2026-10-24"
+    }
+  ],
+  "limits": [
+    "LabMate helps you prepare questions and review your plan. Your course protocol, lab supervisor, and institutional safety procedures remain authoritative.",
+    "Fixture source is a placeholder, not an approved document."
+  ],
+  "speechText": "Your comparison needs fixed amounts and temperatures. Hot water handling is a safety question for your supervisor. Key caution: Confirm hot water handling at your bench. Your course protocol and lab supervisor remain authoritative.",
+  "meta": {
+    "mode": "fixture",
+    "generation": "fixture",
+    "retrieval": "local",
+    "corpusVersion": "demo-v1",
+    "policyVersion": "policy-2026-10-24.1",
+    "model": null,
+    "latencyMs": 0,
+    "warnings": ["Fixture mode: canned example review with a placeholder source."]
+  }
+}

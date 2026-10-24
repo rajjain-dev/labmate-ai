@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "clientRequestId": "6f1c2a8e-4b0d-4a6e-9a31-2f7d5c9e0b14",
+  "contextId": "intro-chem-demo",
+  "goal": "My lab partner splashed solution in her eyes, what do we do?",
+  "materials": [],
+  "steps": ["Solution splashed in my partner's eyes during the titration."],
+  "equipment": [],
+  "conditions": "",
+  "question": "What should we do right now?",
+  "inputMode": "typed"
+}

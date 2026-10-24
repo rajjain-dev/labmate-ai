@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "clientRequestId": "d34567ba-2121-4131-8b4b-389e5cbab110",
+  "contextId": "intro-chem-demo",
+  "goal": "Compare how water temperature affects dissolving time.",
+  "materials": ["water", "table sugar"],
+  "steps": ["Compare two cups and record when sugar disappears."],
+  "equipment": ["cups", "timer"],
+  "conditions": "Amounts and temperatures have not been specified.",
+  "question": "What should I clarify with my teaching assistant?",
+  "inputMode": "typed"
+}
