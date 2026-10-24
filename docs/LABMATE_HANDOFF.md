@@ -1,6 +1,6 @@
 # LabMate AI Implementation Plan and Team Handoff
 
-Version 2.1 | 24 October 2026 | Four builders and four coding agents | Six hour build budget
+Version 2.2 | 24 October 2026 | Four builders and four coding agents | Six hour build budget
 
 Build an undergraduate experiment preparation assistant that turns a student's description into a source linked review of missing information, experimental design concerns, and safety questions for a teaching assistant. A student can speak or type, correct the transcript, review the findings, open the supporting source, and hear a short readback. The product must never approve an experiment or predict success with an invented percentage.
 
@@ -10,7 +10,7 @@ This document is the implementation specification for a new teammate or AI sessi
 
 **Deadline.** Shipyard's guide sets project submission at 3:45 PM on October 24, 2026, with judging at 4:30 PM. All clock times below use New York local time, Eastern Daylight Time on this date. The guide labels its schedule EST; use the stated local clock deadline and confirm announcements on site. Starting at 11 AM leaves 4 hours 45 minutes, so the compressed schedule in section 6 takes precedence over a full six hour schedule. [1]
 
-**Who should start where.** All four builders and agents read sections 1 through 6 and 19 through 21. A owns the student interface, B the review engine and contracts, C evidence and Snowflake, and D voice and integration. Each teammate runs one agent in an isolated checkout. New sessions start with section 17. The included coordination kit makes progress and messages visible through Git; it is not connected to a team repository yet.
+**Who should start where.** All four builders and agents read sections 1 through 6 and 19 through 21. A owns the student interface, B the review engine and contracts, C evidence and Snowflake, and D voice and integration. Each teammate runs one agent in an isolated checkout. New sessions start with section 17. The private [shared starter repository](https://github.com/rajjain-dev/labmate-ai) contains the handoff and coordination kit. Teammates need collaborator access; the application scaffold is still pending.
 
 ## Document map
 
