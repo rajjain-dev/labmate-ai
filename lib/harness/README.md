@@ -8,16 +8,19 @@ validate (Zod, strict) -> deterministic emergency / out-of-scope routes (zero mo
 - `lib/contracts.ts` — schema 1.0, contract C001 (proposed): request, source, retrieval, response, errors, transcribe/speech/health/vision bodies, provider seams (`RetrieveFn`, `GenerateFn`, `TranscribeFn`, `SynthesizeFn`), voice component props.
 - `lib/harness/policy.ts` — system policy, emergency/out-of-scope cues, fixed copy, language policy, state precedence, speech text.
 - `lib/harness/modelSchema.ts` — model-owned fields and the JSON schema sent to Grok.
-- `lib/harness/http.ts` — transport: body limit 16 KiB, 400/413/415/422/429/502/503/504, in-memory rate limit (5/min, 2 concurrent; single process only), fixture mode, health.
+- `lib/harness/http.ts` — transport: same-origin check (403; `APP_ORIGIN` pins it), body limit 16 KiB, 400/413/415/422/429/502/503/504, in-memory rate limit (5/min, 2 concurrent; single process only), fixture mode, health.
 - `lib/providers/grok.ts` — xAI Responses API adapter (`XAI_API_KEY`, `XAI_MODEL`).
 - `app/api/review/route.ts`, `app/api/health/route.ts` — thin Next.js route handlers.
 - `data/fixtures/` — requests (water/sugar, emergency, out-of-scope) and two contract-valid responses.
-- `tests/harness.test.ts` — Vitest suite (contracts, policy, harness, transport).
+- `tests/harness.test.ts` — Vitest suite: contracts, policy, harness, transport, plus the handoff section 15 safety and negative cases (unspecified inputs, empty/invalid/conflicting retrieval, oversized and HTML model output, injection, cancellation, same-origin).
+- `skills/labmate-review/` — reusable Agent Skill (MIT). `scripts/review.mjs` posts to a running app's `/api/review`, so it uses this same harness; it holds no policy. Tested in `tests/skill.test.ts`; validated with the `agentskills` reference validator.
 
 ## Run
 ```sh
 npm test            # Vitest from the common scaffold
 npm run check       # typecheck + tests + production build
+npm run dev         # then, in another terminal:
+node skills/labmate-review/scripts/review.mjs data/fixtures/request-water-sugar.json
 ```
 
 ## Integration notes for D

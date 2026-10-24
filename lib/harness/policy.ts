@@ -72,6 +72,17 @@ export function detectOutOfScope(r: ReviewRequest): boolean {
   return OUT_OF_SCOPE_PATTERNS.some((p) => p.test(t));
 }
 
+/**
+ * Gaps visible in the request itself (handoff section 15: unspecified material or condition -> clarification).
+ * The harness only names the gap; it never fills in a chemical, quantity or condition.
+ */
+export function requestGaps(r: ReviewRequest): string[] {
+  const gaps: string[] = [];
+  if (r.materials.length === 0) gaps.push("Materials are not listed. Name each material as your course protocol does.");
+  if (!r.conditions.trim()) gaps.push("Conditions are not specified, such as amounts, concentrations, temperatures or timing.");
+  return gaps;
+}
+
 // --- State precedence: emergency > out_of_scope > supervisor > clarification > available
 const RANK: Record<ReviewState, number> = {
   review_available: 0,

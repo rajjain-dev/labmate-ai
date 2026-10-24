@@ -27,6 +27,8 @@ export interface ServerConfig {
   enableVoice: boolean;
   enableVision: boolean;
   corpusVersion: string;
+  /** Fixed public origin (e.g. https://labmate.example). Unset: compare against the request's Host. */
+  appOrigin: string | null;
 }
 
 export function readConfig(env: Record<string, string | undefined> = process.env): ServerConfig {
@@ -36,6 +38,7 @@ export function readConfig(env: Record<string, string | undefined> = process.env
     enableVoice: env.ENABLE_VOICE === "true",
     enableVision: env.ENABLE_VISION === "true",
     corpusVersion: env.CORPUS_VERSION || "demo-v1",
+    appOrigin: env.APP_ORIGIN || null,
   };
 }
 
@@ -61,6 +64,25 @@ export function json(body: unknown, status = 200, extra: Record<string, string> 
 export function errorResponse(code: ErrorCode, message: string, extra: Record<string, string> = {}): Response {
   const body: ErrorResponse = { requestId: randomUUID(), error: { code, message, retryable: RETRYABLE.has(code) } };
   return json(body, STATUS[code], extra);
+}
+
+/**
+ * Same-origin check (handoff section 13), matching D's voice routes. Browsers always send Origin on POST;
+ * a missing Origin is a non-browser client (the labmate-review skill, curl), which is still rate limited.
+ * Never trusts X-Forwarded-Host. Returns null when allowed.
+ */
+export function originProblem(req: Request, cfg: Pick<ServerConfig, "appOrigin">): "forbidden" | "misconfigured" | null {
+  if (req.headers.get("sec-fetch-site") === "cross-site") return "forbidden";
+  const origin = req.headers.get("origin");
+  if (!origin) return null;
+  let expected: string;
+  try {
+    const url = new URL(req.url);
+    expected = new URL(cfg.appOrigin || `${url.protocol}//${req.headers.get("host") || url.host}`).origin;
+  } catch {
+    return "misconfigured";
+  }
+  return origin === expected ? null : "forbidden";
 }
 
 // --- Rate limiting: in-memory, single-process demo only (not reliable across serverless instances).
@@ -119,6 +141,9 @@ export async function handleReviewPost(
   opts: { config?: ServerConfig; deps?: ReviewDependencies } = {},
 ): Promise<Response> {
   const cfg = opts.config ?? readConfig();
+  const origin = originProblem(req, cfg);
+  if (origin === "misconfigured") return errorResponse("REVIEW_UNAVAILABLE", "The application origin is not configured.");
+  if (origin === "forbidden") return errorResponse("FORBIDDEN", "Use LabMate from this application's page.");
   const ct = req.headers.get("content-type") ?? "";
   if (!ct.toLowerCase().includes("application/json")) return errorResponse("UNSUPPORTED_MEDIA", "Use application/json.");
   const len = Number(req.headers.get("content-length") ?? "0");

@@ -28,6 +28,7 @@ import {
   deriveState,
   detectEmergency,
   detectOutOfScope,
+  requestGaps,
 } from "./policy";
 
 export const REVIEW_DEADLINE_MS = 25_000;
@@ -131,6 +132,7 @@ function extractJson(text: string): unknown {
 export function normalizeModelReview(
   m: ModelReview,
   sources: SourcePassage[],
+  gaps: string[] = [],
 ): { state: ReviewState; summary: string; missingInformation: string[]; findings: Finding[]; questionsForTA: string[]; limits: string[]; warnings: string[] } {
   const warnings: string[] = [];
   const validIds = new Set(sources.map((s) => s.sourceId));
@@ -164,7 +166,15 @@ export function normalizeModelReview(
   });
   if (droppedCitations > 0) warnings.push(`Removed ${droppedCitations} citation(s) not in the approved source set.`);
 
-  const missingInformation = list(m.missingInformation, 6, 200);
+  const seen = new Set<string>();
+  const missingInformation = [...gaps.map((g) => clip(g, 200)), ...list(m.missingInformation, 6, 200)]
+    .filter((x) => {
+      const k = x.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 6);
   const questionsForTA = list(m.questionsForTA, 5, 200);
   const limits = [PRODUCT_LIMIT.slice(0, 200), ...list(m.limits, 3, 200)].slice(0, 4);
   const summary = pol(m.summary, 700) || "Review generated; see findings below.";
@@ -258,7 +268,7 @@ export async function runReview(input: unknown, deps: ReviewDependencies, o: Run
   }
 
   // 7. Output policy and authoritative sources (server objects, only those cited or retrieved).
-  const n = normalizeModelReview(review, sources);
+  const n = normalizeModelReview(review, sources, requestGaps(req));
   const response: ReviewResponse = {
     schemaVersion: SCHEMA_VERSION,
     requestId: deps.makeId(),
