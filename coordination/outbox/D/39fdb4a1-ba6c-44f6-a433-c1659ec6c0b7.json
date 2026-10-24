@@ -1,0 +1,15 @@
+{
+  "eventId": "39fdb4a1-ba6c-44f6-a433-c1659ec6c0b7",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T16:27:01.576Z",
+  "type": "READY",
+  "ref": null,
+  "subject": "D voice candidate df33e29: 38 tests and production smoke pass",
+  "body": "Exact code df33e29 passes npm run check: typecheck, 38 integration/component tests, build and standalone packaging. Production HTTP smoke passes root/static assets, MP4 fixture transcription, MP3 fixture announcement, cross-origin rejection and absence of packaged .env files. Voice is disabled by default; fixture outputs are explicit; live is supervised single process with hard attempt cap. See docs/VOICE_INTEGRATION.md for seams. C001 remains PENDING: B must publish contract and A/B must acknowledge before consumer merge. Human is setting up ElevenLabs credits; live browser and provider checks remain pending.",
+  "codeCommit": "df33e29318980c699da8c86c95ce60f053f71bf5"
+}

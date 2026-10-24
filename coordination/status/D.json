@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T16:21:11.142Z",
-  "state": "WORKING",
-  "codeCommit": "419b1c948d91fc6b2274dfcfbaf8768136f20e22",
+  "updatedAt": "2026-10-24T16:27:01.480Z",
+  "state": "READY",
+  "codeCommit": "df33e29318980c699da8c86c95ce60f053f71bf5",
   "contractRevision": "PENDING",
-  "doing": "Common scaffold merged into main at 419b1c9; building voice routes and controls on D branch",
-  "next": "Test voice transport and component lifecycle; request B/A agreement on voice exports",
-  "blockers": "C001 PENDING. Human is redeeming ElevenLabs hackathon credits; live calls not yet tested.",
-  "checks": "Scaffold 419b1c9: npm run typecheck PASS; npm run build PASS. Voice implementation still uncommitted and under test."
+  "doing": "Voice candidate implemented and tested at df33e29; common scaffold already on main",
+  "next": "B publishes C001; A/B acknowledge voice seams; human configures ElevenLabs key for live checks",
+  "blockers": "C001 PENDING; voice candidate must not merge before shared interface agreement. Human redeeming ElevenLabs credits; no live provider evidence or deployment.",
+  "checks": "On df33e29: npm run check PASS (typecheck, 38 tests, production build and standalone packaging); standalone HTTP smoke PASS (home/static assets, MP4 fixture transcription, MP3 fixture announcement, cross-origin 403, no packaged .env files). No live provider/browser microphone journey tested."
 }
