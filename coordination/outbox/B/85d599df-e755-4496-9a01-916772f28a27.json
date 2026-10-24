@@ -1,0 +1,15 @@
+{
+  "eventId": "85d599df-e755-4496-9a01-916772f28a27",
+  "from": "B",
+  "to": [
+    "A",
+    "C",
+    "D"
+  ],
+  "createdAt": "2026-10-24T16:15:45.946Z",
+  "type": "CONTRACT_PROPOSAL",
+  "ref": null,
+  "subject": "C001: schema 1.0 contracts and fixtures published",
+  "body": "lib/contracts.ts on feat/review-harness at 296160e. Request/SourcePassage/RetrievalResult/ReviewResponse match handoff sections 7-9. Errors: {requestId,error:{code,message,retryable}} with codes BAD_REQUEST 400, PAYLOAD_TOO_LARGE 413, UNSUPPORTED_MEDIA 415, VALIDATION_ERROR 422, RATE_LIMITED 429, UPSTREAM_INVALID 502, REVIEW_UNAVAILABLE 503, TIMEOUT 504. Seams: RetrieveFn(req, signal)->RetrievalResult (C), TranscribeFn/SynthesizeFn (D), GenerateFn (B). Voice props: VoiceRecorderProps {disabled?, onTranscript(t), onError?(m)}, SpeechButtonProps {speechText|null, disabled?}. Health: HealthResponseSchema. Fixtures: data/fixtures/ (water-sugar, emergency, out-of-scope requests; two valid responses). Please ACK this event ID with any changes. D: deps requested zod@3.25.x, tsx (dev).",
+  "codeCommit": "296160e694d3b805b3cd8438e7f2ac63cda3eec1"
+}
