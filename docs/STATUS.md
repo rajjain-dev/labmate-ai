@@ -1,5 +1,7 @@
 # Integrated MVP status
 
+Current frontend: the human-requested Sable design and microphone integration are implemented in this checkout and previewed on http://127.0.0.1:3108. The document, voice, cancellation and emergency behavior described below remain in place. See [SABLE_INTEGRATION.md](SABLE_INTEGRATION.md) for actual build, browser and live provider checks. The separate LabMate animation work retains port 3107.
+
 Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coordination/status/D.json.
 
 - Current experience: upload a selectable-text lab PDF, start voice, hear the overview and exact handout precaution quotes, then ask ongoing questions. Voice is primary; typing is optional. No app checkboxes, grading, or transcript-confirmation gate.

@@ -14,14 +14,24 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "review:fixture": "node skills/labmate-review/scripts/review.mjs data/fixtures/request-water-sugar.json",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "predev": "node scripts/prepare-sable.mjs",
+    "prebuild": "node scripts/prepare-sable.mjs"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "4.2.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.575.0",
     "music-metadata": "12.3.0",
     "next": "16.4.3",
+    "pdfjs-dist": "4.10.38",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "server-only": "0.0.1",
+    "sonner": "2.0.7",
+    "tailwind-merge": "3.5.0",
+    "tailwindcss": "4.2.1",
+    "tw-animate-css": "1.3.4",
     "unpdf": "1.9.1",
     "zod": "4.6.7"
   },

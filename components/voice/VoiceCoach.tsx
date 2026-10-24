@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { TranscribeResponseSchema, type VoiceMode } from "@/lib/contracts";
 
 const QUESTION = "What are you doing, and what would you like help with?";
 const MAX_BYTES = 5 * 1024 * 1024;
 type Phase = "idle" | "preparing" | "asking" | "listening" | "transcribing" | "thinking" | "reading";
+export interface VoiceCoachControls {
+  active: boolean;
+  phase: Phase;
+  disabled: boolean;
+  status: string;
+  error: string;
+  notice: string;
+  toggle: () => void;
+  finishTurn: () => void;
+}
 class VoiceFailure extends Error {}
 
 async function responseError(response: Response): Promise<VoiceFailure> {
@@ -97,9 +107,10 @@ export interface VoiceCoachProps {
   onTranscript: (transcript: string) => Promise<string | { text: string; endSession?: boolean } | undefined>;
   onActiveChange: (active: boolean) => void;
   onCancel: () => void;
+  renderControls?: (controls: VoiceCoachControls) => ReactNode;
 }
 
-export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous = false, onBegin, startLabel = "Talk to LabMate", onTranscript, onActiveChange, onCancel }: VoiceCoachProps) {
+export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous = false, onBegin, startLabel = "Talk to LabMate", onTranscript, onActiveChange, onCancel, renderControls }: VoiceCoachProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -225,6 +236,7 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
   }
 
   const status = { idle: "", preparing: "Getting ready…", asking: QUESTION, listening: "Listening… ask your question, then pause.", transcribing: "Got it. Turning your answer into words…", thinking: "Thinking with you…", reading: "Here’s your guidance…" }[phase];
+  if (renderControls) return renderControls({ active, phase, disabled: !active && (disabled || mode === "disabled"), status, error, notice, toggle: () => active ? cancel() : void start(), finishTurn: () => finish.current?.() });
   return <section className={`voice-coach ${active ? "active" : ""}`} aria-label="Talk to LabMate">
     <div className={`voice-orb ${phase}`} aria-hidden="true">⌁</div>
     <h2>{phase === "listening" ? "I’m listening" : "Your lab companion"}</h2>
