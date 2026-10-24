@@ -1,6 +1,6 @@
 # Conversational voice integration
 
-The current Sable frontend automatically begins after handout upload: verified safety notes and warnings first, key points next, then spoken questions. The upload gesture unlocks playback, and microphone permission is requested after the opening. See docs/SABLE_INTEGRATION.md for the current interface; the manual-start flow below describes the shared engine’s earlier LabMate presentation.
+The current Sable frontend automatically begins after handout upload: an immediate prerecorded greeting and first preparation prompt, then one general preparation item per reply. Microphone permission follows the first prompt so Sable can hear the response. The four-item sequence is followed by handout/verified web warnings, key points, then spoken questions. Type instead retains the preparation state and submits with End turn. The upload gesture unlocks playback. See docs/SABLE_INTEGRATION.md for the current interface; the manual-start flow below describes the shared engine’s earlier LabMate presentation.
 
 The human requested a conversation as the primary experience, with optional typing and no app checkboxes or transcript confirmation. This replaces the original C001 confirmation workflow under direct human direction; see coordination/DECISIONS.md (C002).
 

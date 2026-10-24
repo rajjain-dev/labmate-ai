@@ -1,5 +1,7 @@
 # Sable
 
+<img src="public/sable/sable-awake.png" alt="Sable, the cheerful lab companion" width="150" align="right" />
+
 **A conversational companion for the teaching lab.**
 
 Upload your experiment handout and get ready with Sable. A cheerful voice walks you through general lab preparation, one item at a time, then explains the experiment's key warnings and concepts. During the experiment, ask questions out loud or type a reply. Sable helps you understand your work without grading you.
