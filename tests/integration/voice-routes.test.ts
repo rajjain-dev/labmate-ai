@@ -120,6 +120,10 @@ describe("audio validation and transcription", () => {
     const response = await transcribe(await audioRequest());
     expect(response.status).toBe(502); expect(response.headers.get("X-LabMate-Mode")).toBeNull();
   });
+  it.each([[5000, 200], [5001, 502]])("enforces the proposed C001 transcript limit at %i characters", async (length, status) => {
+    live(); vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ text: "a".repeat(length) })));
+    expect((await transcribe(await audioRequest())).status).toBe(status);
+  });
 });
 
 describe("provider budgets, cancellation and failure privacy", () => {

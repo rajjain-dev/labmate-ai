@@ -111,7 +111,7 @@ export function VoiceRecorder({ onConfirm, disabled = false, mode = "disabled" }
           if (!response.ok) throw new Error("Transcription is unavailable. Please type your plan or try another browser.");
           const data = await response.json();
           const returnedMode = response.headers.get("X-LabMate-Mode");
-          if (data.requiresConfirmation !== true || typeof data.transcript !== "string" || !data.transcript.trim() || data.transcript.length > 6000 || !["fixture", "live"].includes(returnedMode ?? "")) {
+          if (data.requiresConfirmation !== true || typeof data.transcript !== "string" || !data.transcript.trim() || data.transcript.length > 5000 || !["fixture", "live"].includes(returnedMode ?? "")) {
             throw new Error("The transcript could not be read. Please type your plan.");
           }
           if (token !== generation.current) return;
@@ -152,7 +152,7 @@ export function VoiceRecorder({ onConfirm, disabled = false, mode = "disabled" }
       {phase === "draft" && <div>
         {resultMode === "fixture" && <p>Fixture transcript: this is sample text, not recognition of your recording.</p>}
         <label htmlFor={`${id}-transcript`}>Edit transcript</label>
-        <textarea id={`${id}-transcript`} value={transcript} maxLength={6000} onChange={event => { setTranscript(event.target.value); setConfirmed(false); }} />
+        <textarea id={`${id}-transcript`} value={transcript} maxLength={5000} onChange={event => { setTranscript(event.target.value); setConfirmed(false); }} />
         <label><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />I checked chemical names, quantities, units, and negation.</label>
         <button type="button" disabled={unavailable || !confirmed || !transcript.trim()} onClick={() => { onConfirm(transcript.trim()); cancel(); }}>Use confirmed transcript</button>
         <p>This fills the plan draft. Review requires a separate submission.</p>

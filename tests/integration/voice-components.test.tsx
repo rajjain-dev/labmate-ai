@@ -101,6 +101,13 @@ it("labels fixture transcripts so they cannot be mistaken for recognition", asyn
   expect(await screen.findByText(/this is sample text/)).toBeTruthy();
 });
 
+it("rejects a transcript exceeding the proposed C001 limit before confirmation", async () => {
+  vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({ transcript: "a".repeat(5001), requiresConfirmation: true }), { headers: { "X-LabMate-Mode": "live" } }));
+  const onConfirm = vi.fn(); await startRecording(onConfirm);
+  fireEvent.click(screen.getByRole("button", { name: "Stop recording" }));
+  await screen.findByRole("alert"); expect(screen.queryByRole("textbox")).toBeNull(); expect(onConfirm).not.toHaveBeenCalled();
+});
+
 function fakeAudio() {
   const player = { play: vi.fn().mockResolvedValue(undefined), pause: vi.fn(), load: vi.fn(), removeAttribute: vi.fn(), onended: null as (() => void) | null, onerror: null as (() => void) | null };
   vi.stubGlobal("Audio", vi.fn(function () { return player; }));

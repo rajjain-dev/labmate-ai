@@ -1,5 +1,4 @@
 import "server-only";
-import type { ValidatedAudio } from "@/lib/voice/media";
 import { readBoundedBody, VoiceError } from "@/lib/voice/http";
 
 const baseUrl = "https://api.elevenlabs.io/v1";
@@ -20,7 +19,7 @@ async function providerResponse(url: string, init: RequestInit, signal: AbortSig
   return response;
 }
 
-export async function transcribe(audio: ValidatedAudio, signal: AbortSignal): Promise<string> {
+export async function transcribe(audio: { bytes: Uint8Array; mimeType: string }, signal: AbortSignal): Promise<string> {
   const key = config("ELEVENLABS_API_KEY");
   const form = new FormData();
   form.set("file", new Blob([new Uint8Array(audio.bytes)], { type: audio.mimeType }), audio.mimeType === "audio/webm" ? "recording.webm" : "recording.mp4");
@@ -34,7 +33,7 @@ export async function transcribe(audio: ValidatedAudio, signal: AbortSignal): Pr
   try { data = JSON.parse(new TextDecoder().decode(await readBoundedBody(response, 64 * 1024, signal))); }
   catch (error) { if (signal.aborted) throw error; throw new VoiceError(502, "UPSTREAM_INVALID", "The voice provider returned an unreadable transcript.", true); }
   const text = data && typeof data === "object" && "text" in data ? data.text : null;
-  if (typeof text !== "string" || !text.trim() || text.length > 6000) throw new VoiceError(502, "UPSTREAM_INVALID", "The voice provider returned an unreadable transcript.", true);
+  if (typeof text !== "string" || !text.trim() || text.length > 5000) throw new VoiceError(502, "UPSTREAM_INVALID", "The voice provider returned an unreadable transcript.", true);
   return text.trim();
 }
 
