@@ -1,24 +1,18 @@
-# Integrated build status
+# Integrated MVP status
 
-Owner: D. The common application scaffold is published on main. There is no assembled student review journey or deployment yet.
+Owner: D. Updated October 24, 2026, 1:27 PM America/New_York.
 
-- Updated time and timezone: October 24, 2026, 12:38 PM America/New_York (16:38 UTC)
-- Shared remote: https://github.com/rajjain-dev/labmate-ai
-- Integrated application commit: `419b1c948d91fc6b2274dfcfbaf8768136f20e22` (common scaffold only; later status-only commits do not add application features)
-- Last passing release commit: none; scaffold checks are not the product release gates
-- Accepted contract revision: PENDING; C001 has no B proposal or required owner acknowledgments yet
-- Wire schema target: 1.0; executable contracts/fixtures pending B
-- Merged source commits: D scaffold `a391f17`, integrated with the existing handoff update as `419b1c9`; A/B/C application slices not yet offered as READY
-- Working journeys and actual modes: scaffold home page only; fixture is the default configuration; voice/vision disabled; review/health/retrieval not integrated
-- Commands and actual results on integrated scaffold `419b1c9`: `npm run typecheck` PASS; `npm run build` PASS using Node 24.22.1; GitHub CI also passed. No application tests existed on that baseline; no policy or live provider journey was verified
-- Failing checks and responsible owner: no failing scaffold checks; product integration gates remain unmet, with A owning UI, B contracts/review/policy, C evidence/retrieval and D voice/assembly
-- D voice candidate: code `df33e29` on `feat/voice-integration`, [draft PR #1](https://github.com/rajjain-dev/labmate-ai/pull/1); NOT merged into main
-- Candidate verification, separate from integrated main: `npm run check` PASS (typecheck, 38 integration/component tests, production build, standalone packaging); production HTTP smoke PASS (home/static assets, MP4 fixture transcription, MP3 fixture announcement, cross-origin rejection, no packaged local environment files)
-- Live candidate evidence on `af72364` (same application code as `df33e29`): real production `/api/transcribe` returned 200 live using `scribe_v2` on synthetic MP4 with expected words and confirmation required (938 ms); `/api/speech` returned 200 live MP3 using `eleven_multilingual_v2` (1285 ms). The key and verified model/voice settings remain only in D's ignored local config. Evidence is recorded on the D branch, not an integrated release
-- Candidate limits: C001 pending; A has not mounted controls; actual browser microphone/correction/review/readback unverified. Live voice is gated to a supervised single process and remains disabled on public/serverless deployments pending a distributed limiter
-- Deployment URL and deployed commit: none
-- Sponsor qualification: no tracks verified; partial live ElevenLabs route evidence exists, with the assembled browser journey pending; private repository, source permissions and open-source license still require release work
-- Freeze and submission: not frozen; not submitted
-- Next actions: B publishes executable C001 proposal/fixtures and obtains A/B/C/D acknowledgments; A/B/C merge latest main into their isolated role branches and publish factual status; D aligns interfaces, integrates only agreed tested slices and verifies the actual browser voice journey
+- Current application commit: 6357fc3, assembled on codex/mvp-assembly for publication to main.
+- Scope: working local student UI, live Grok review, clarification edits, inspectable NIST excerpts, fixed emergency guidance, integrated consented voice input and summary readback.
+- Source commits: B backend/skill/repairs 3eabcbf; D voice alignment 1843942; D MVP UI/evidence 618b059; final assembly 6357fc3. A/C's original remote starter records are preserved; D completed the missing modules at the human's explicit request.
+- Contract: B C001 wire schema 1.0 used unchanged. D ACK recorded; no fabricated A/C ACKs. Human explicitly authorized D to complete other roles for fast MVP delivery.
+- Verification actually run: npm run build PASS on 6357fc3, including TypeScript compilation and standalone packaging. Test suites SKIPPED at the human's request; no claim they pass on the changed MVP. CI suites are opt-in via LABMATE_RUN_TESTS=true during this sprint.
+- Live request on 6357fc3: HTTP 200, state needs_clarification, mode live, model grok-4.20-0309-non-reasoning, retrieval local, 3 sources and 2 findings, 7328 ms. App request ID: 17b75d8a-840d-4d57-a650-1af2e88bab85.
+- Voice: prior real ElevenLabs STT/TTS server routes passed; controls are mounted in the UI. Actual human microphone workflow remains for the user to exercise; browser format limitations remain documented.
+- Local app URL: http://127.0.0.1:3107 (supervised single Node process). No public deployment URL.
+- Modes and secrets: default shared config is fixture, live requires explicit supervised flags and provider attempt caps; local live keys are in ignored .env.local only. No vendor retention promise is made.
+- Source pack: three short attributed NIST design excerpts, general guidance only. No course-specific protocol or SDS, no safety approval.
+- Excluded to ship faster: Snowflake and camera. No claim of qualifying those tracks.
+- Remaining public release work: host/shared limiter for public live access, instructor applicability review, root license/public-release decision, demo/submission materials.
 
-D has published kickoff, scaffold merge, voice seam, READY, contract-blocker and live-provider verification events on `feat/voice-integration`. As of the latest fetch at 12:37 PM New York time, remote A/B/C records were still NOT_STARTED and stale; no acknowledgments have been received. Git events are available when those sessions fetch; they do not wake idle agents. The human should relay the outstanding C001 request to teammate B.
+See docs/MVP.md for setup, docs/TRACK_EVIDENCE.md for sanitized live evidence, and data/SOURCE_LICENSES.md for provenance. Earlier role review docs are historical snapshots; B's repair commit is integrated.

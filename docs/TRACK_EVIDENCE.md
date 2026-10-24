@@ -32,3 +32,10 @@ Code commit: `af723648e68046f3f181741d3dfcdb4cb03f0c61`; application files are u
 The transcription input was a synthetic local test sentence encoded as MP4; expected words were recognized and `requiresConfirmation` was true. Readback returned 67,752 bytes of MP3 using the stock George voice. Only the generated test media stays under ignored `.coord-local/voice-smoke/`; no private student content, account identifiers, API keys or raw media are committed.
 
 A model-listing request was denied for missing `models_read` permission, while both required speech endpoints succeeded. This is partial sponsor evidence: actual browser microphone capture, correction, assembled review and playback remain unverified. No claim of a complete voice journey or track qualification is made.
+
+## Integrated live Grok MVP
+
+- Code: 6357fc3; timestamp: 2026-10-24T17:27:22.664Z.
+- POST /api/review: 200, mode live, generation grok, model grok-4.20-0309-non-reasoning; 3 local NIST sources, 2 findings; state needs_clarification; 7328 ms.
+- App request ID: 17b75d8a-840d-4d57-a650-1af2e88bab85. Input: existing synthetic water/sugar planning fixture; no private student input.
+- Production build/TypeScript compilation passed. Test suites were skipped at the human's explicit request. No public deployment or accuracy claim.
