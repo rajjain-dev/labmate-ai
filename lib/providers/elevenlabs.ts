@@ -43,7 +43,17 @@ export async function synthesize(text: string, signal: AbortSignal): Promise<Uin
   const model = config("ELEVENLABS_TTS_MODEL");
   const response = await providerResponse(`${baseUrl}/text-to-speech/${voice}?output_format=mp3_44100_128`, {
     method: "POST", headers: { "xi-api-key": key, "Content-Type": "application/json", Accept: "audio/mpeg" },
-    body: JSON.stringify({ text, model_id: model }),
+    body: JSON.stringify({
+      text,
+      model_id: model,
+      voice_settings: {
+        stability: 0.45,
+        similarity_boost: 0.75,
+        style: 0.35,
+        speed: 1.02,
+        use_speaker_boost: true,
+      },
+    }),
   }, signal);
   if (!response.headers.get("content-type")?.includes("audio/mpeg")) throw new VoiceError(502, "UPSTREAM_INVALID", "The voice provider returned unreadable audio.", true);
   let bytes: Uint8Array;
