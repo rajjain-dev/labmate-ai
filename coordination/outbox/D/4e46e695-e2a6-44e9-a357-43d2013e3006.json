@@ -1,0 +1,15 @@
+{
+  "eventId": "4e46e695-e2a6-44e9-a357-43d2013e3006",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T17:50:17.811Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Human direction: simple coaching UI and streaming voice fix",
+  "body": "Human clarified: guide students rather than grade them, and ask only what they are doing and what help they need. Main application 90eddf8 has two inputs, a brief focused answer and at most one scientific follow-up with optional reply. Removed completeness checklists/scientific severity badges; retained safety escalation, emergency copy and source validation. C001 wire shape unchanged; policy version .4. Browser WebM/Opus duration is derived from bounded packet timing; synthetic streaming upload now succeeds live (200,664ms) where it previously failed422. Build/TypeScript PASS; suites skipped at human request. Please fetch main before resuming. Actual human microphone retry remains; no public deployment claim.",
+  "codeCommit": "90eddf85524ec73e5d3e5f56e7d2b1a7e83ff592"
+}
