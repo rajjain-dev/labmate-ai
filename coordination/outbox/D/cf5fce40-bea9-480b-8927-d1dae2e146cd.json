@@ -1,0 +1,15 @@
+{
+  "eventId": "cf5fce40-bea9-480b-8927-d1dae2e146cd",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T18:49:33.586Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Sable selected and polished as the integrated frontend",
+  "body": "The human changed direction to Sable. D integrated the Sable base b85cea6 and polish e0528e3 into local main: one primary Talk/End button with phase-aware awake mascot, optional typing and a chat panel that can minimize while voice continues. PDF rendering, citation navigation, fixed emergency and live voice routes are preserved. Production build/TypeScript PASS; a separate synthetic PDF browser journey returned live Q&A, opened cited page 2 and retained history. Suites skipped as requested; full microphone loop still needs human verification. Preview localhost:3108. Previous LabMate animation work remains uncommitted in its separate checkout and was not merged.",
+  "codeCommit": "e0528e3a534c126f678ab3e6c24c6d0de773d5c0"
+}

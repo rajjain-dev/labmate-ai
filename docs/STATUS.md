@@ -1,6 +1,6 @@
 # Integrated MVP status
 
-Current frontend: the human-requested Sable design and microphone integration are implemented in this checkout and previewed on http://127.0.0.1:3108. The document, voice, cancellation and emergency behavior described below remain in place. See [SABLE_INTEGRATION.md](SABLE_INTEGRATION.md) for actual build, browser and live provider checks. The separate LabMate animation work retains port 3107.
+Current frontend: the human selected Sable as the integration direction. It runs on http://127.0.0.1:3108 with one Talk/End conversation button, an animated awake companion, optional typing and a panel that minimizes without ending voice. See [SABLE_INTEGRATION.md](SABLE_INTEGRATION.md) for actual build, browser and live provider checks. The separate uncommitted LabMate animation is preserved in its own checkout on port 3107.
 
 Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coordination/status/D.json.
 
@@ -12,7 +12,7 @@ Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coo
 - Live Grok briefing: HTTP 200, 1060 ms; three precaution quotes, all verified against page 1 of the synthetic handout. Follow-up answer and ElevenLabs audio evidence are recorded in D's release status.
 - Browser: PDF chooser/upload observed working, conversation control enabled, optional typed question exercised. Actual human microphone capture, pause detection, and continuous spoken conversation still need the user's trial. Server diagnostics do not substitute for that evidence.
 - Tests: suites SKIPPED at the human's request. Legacy confirmation/component and old rate-limit assertions are now historical and need updating before opting CI suites back in.
-- Local app: http://127.0.0.1:3107. No public host is claimed. Public/serverless live use needs shared limits; current operation is a supervised single process with bounded concurrency, rate limits and provider-attempt caps.
+- Current Sable app: http://127.0.0.1:3108. No public host is claimed. Public/serverless live use needs shared limits; current operation is a supervised single process with bounded concurrency, rate limits and provider-attempt caps.
 - Data: no credentials, private handouts, private audio or student messages are committed. The PDF is not saved by the app; handout text and recent turns are sent to xAI, audio/text for speech to ElevenLabs. No provider retention promise is made.
 - Bounds: 5-MiB PDF, 25 pages, 24,000 extracted characters; 29-second / 5-MiB utterances; 20 voice calls/minute and two concurrent, plus configured hard per-process paid-attempt caps. Voice ends on leaving the foreground. Talking over playback does not interrupt it; End conversation does.
 - Preserved: fixed emergency escalation, handout source page inspection, bounded private routes, source-based precaution quotes and no experimental approval.

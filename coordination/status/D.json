@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T18:41:01.339Z",
-  "state": "READY",
-  "codeCommit": "b85cea66636e5e98dfd60621e301bd5687ab9ab8",
-  "contractRevision": "C003",
-  "doing": "Sable frontend and continuous voice integration complete",
-  "next": "Human microphone conversation trial in Sable at localhost:3108",
-  "blockers": "",
-  "checks": "b85cea6 production build and TypeScript PASS; browser synthetic PDF rendering, live typed Q&A, citation navigation, retained history and emergency dialog PASS; live speech/transcription HTTP200; suites skipped under prior human instruction; full human microphone loop not claimed"
+  "updatedAt": "2026-10-24T18:49:33.436Z",
+  "state": "MERGED",
+  "codeCommit": "e0528e3a534c126f678ab3e6c24c6d0de773d5c0",
+  "contractRevision": "C002",
+  "doing": "Integrated Sable as the selected frontend: one Talk/End button, an animated awake companion, optional typing and a smaller chat panel that minimizes without stopping voice.",
+  "next": "Human spoken conversation trial in Sable at localhost:3108; finish hackathon demo and submission materials.",
+  "blockers": "Full microphone/pause-detection loop remains unverified by the agent. Public live hosting requires shared limits. Suites skipped by human request.",
+  "checks": "e0528e3: npm run build PASS including TypeScript and standalone package. Separate browser synthetic 2-page PDF upload/render PASS; optional typing returned live source-grounded answer; page-2 citation opened page 2 and conversation history persisted. Awake image and panel rendered correctly. Suites SKIPPED; no human microphone end-to-end pass claimed. Prior live STT/TTS checks are recorded in docs/SABLE_INTEGRATION.md."
 }
