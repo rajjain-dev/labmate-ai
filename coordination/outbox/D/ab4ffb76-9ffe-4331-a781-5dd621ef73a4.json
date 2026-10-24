@@ -1,0 +1,15 @@
+{
+  "eventId": "ab4ffb76-9ffe-4331-a781-5dd621ef73a4",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T18:30:35.053Z",
+  "type": "MERGED",
+  "ref": null,
+  "subject": "Conversational PDF MVP and cheerful custom voice integrated",
+  "body": "Human-authorized expanded delivery is integrated in main at eb3799cbd729ebc2e2c84bcafb318372f73400a1. Upload selectable-text PDF, Start conversation, hear brief and exact-quote precautions, then ask ongoing spoken questions; typing optional and no confirmation checkboxes. Custom cheerful neutral-sounding ElevenLabs voice configured locally with regenerated greeting. Production build and TypeScript PASS; targeted live PDF/Grok/STT/TTS and browser upload/typed diagnostics succeeded. Test suites SKIPPED at human request. Human microphone and pause-detection trial still needed; no barge-in and public shared limiting still excluded. C002 records human direction without peer ACK claims.",
+  "codeCommit": "eb3799cbd729ebc2e2c84bcafb318372f73400a1"
+}

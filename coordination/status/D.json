@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T18:13:29.050Z",
-  "state": "WORKING",
-  "codeCommit": "24f840a4bbb5f30383380a93645b27dc4f863677",
+  "updatedAt": "2026-10-24T18:30:34.951Z",
+  "state": "MERGED",
+  "codeCommit": "eb3799cbd729ebc2e2c84bcafb318372f73400a1",
   "contractRevision": "C002",
-  "doing": "Human-requested conversational lab PDF briefing, quoted precautions and continuous voice Q&A",
-  "next": "Finish packaged PDF reader diagnostic, live conversation verification and integration",
-  "blockers": "",
-  "checks": "Current work is not released yet. Initial compilation/build passes; suites skipped at human request. Packaged PDF worker issue under repair."
+  "doing": "Integrated PDF handout briefings, source-quoted precautions, ongoing voice questions and optional typing; custom cheerful neutral-sounding ElevenLabs voice configured locally.",
+  "next": "User microphone trial on localhost:3107; finish demo and submission materials.",
+  "blockers": "No human microphone/pause-detection pass yet. Public live hosting requires shared limits. Test suites intentionally skipped.",
+  "checks": "eb3799cbd729ebc2e2c84bcafb318372f73400a1: npm run build PASS with TypeScript and standalone packaging. Prior same conversation code live PDF extraction HTTP200, Grok brief HTTP200 (3 exact source quotes), follow-up HTTP200, ElevenLabs briefing HTTP200 and streaming-WebM transcription HTTP200/requiresConfirmation:false. Custom Voice Design/create HTTP200; new voice preview and greeting TTS HTTP200. Browser refreshed PDF upload/Start enabled PASS. Suites SKIPPED by human; actual mic/continuous spoken loop not exercised."
 }
