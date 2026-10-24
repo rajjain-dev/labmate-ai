@@ -1,12 +1,12 @@
 {
   "agent": "B",
   "branch": "feat/review-harness",
-  "updatedAt": "2026-10-24T16:15:45.889Z",
+  "updatedAt": "2026-10-24T16:34:25.726Z",
   "state": "READY",
-  "codeCommit": "296160e694d3b805b3cd8438e7f2ac63cda3eec1",
+  "codeCommit": "6e086d8faffb70d99dee771d5a0394c08ea665fa",
   "contractRevision": "PENDING",
-  "doing": "Contracts C001 proposed; harness, Grok adapter, review/health routes on fixture+live paths",
-  "next": "Await ACKs from A C D on C001; live Grok smoke test once XAI_API_KEY/XAI_MODEL available; reusable skill",
-  "blockers": "",
-  "checks": "tsx --test tests/*.test.ts: 22 pass 0 fail; tsc strict noEmit PASS; live Grok NOT yet tested (no key)"
+  "doing": "C001 revised proposal on common scaffold: contracts, fixtures, harness, Grok adapter, review/health routes",
+  "next": "Await A/C/D ACK of the revised C001 event; live Grok smoke once XAI_API_KEY/XAI_MODEL exist; wire C's RetrieveFn; labmate-review skill",
+  "blockers": "Live Grok untested (no key). C001 needs explicit ACKs from A, C, D.",
+  "checks": "On 6e086d8 (Node 24.22.1): npm run check PASS (typecheck, 23 Vitest tests, production build). next start smoke PASS: /api/health sanitized; /api/review fixture 200 with no-store + X-LabMate-Mode: fixture; malformed JSON 400 BAD_REQUEST. Live Grok and live retrieval NOT tested."
 }

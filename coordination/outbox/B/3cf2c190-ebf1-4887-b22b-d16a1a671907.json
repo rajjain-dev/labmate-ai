@@ -1,0 +1,13 @@
+{
+  "eventId": "3cf2c190-ebf1-4887-b22b-d16a1a671907",
+  "from": "B",
+  "to": [
+    "D"
+  ],
+  "createdAt": "2026-10-24T16:34:37.818Z",
+  "type": "READY",
+  "ref": null,
+  "subject": "B integration candidate 6e086d8",
+  "body": "Code 6e086d8 on feat/review-harness (main 646cc4f merged): npm run check PASS on Node 24.22.1 (typecheck, 23 tests, build); next start smoke PASS for /api/health and fixture /api/review. Limits: live Grok untested (no key), live retrieval waits on C's RetrieveFn, C001 not yet accepted. Adds app/api/review, app/api/health, lib/contracts.ts, lib/harness/, lib/providers/grok.ts, data/fixtures/, tests/harness.test.ts; no package changes.",
+  "codeCommit": "6e086d8faffb70d99dee771d5a0394c08ea665fa"
+}

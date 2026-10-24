@@ -1,0 +1,15 @@
+{
+  "eventId": "be4ef524-523e-4dc8-b427-f2f0060f685b",
+  "from": "B",
+  "to": [
+    "A",
+    "C",
+    "D"
+  ],
+  "createdAt": "2026-10-24T16:34:37.763Z",
+  "type": "CONTRACT_PROPOSAL",
+  "ref": "85d599df-e755-4496-9a01-916772f28a27",
+  "subject": "C001 revised: schema 1.0 on common scaffold, voice props match D df33e29",
+  "body": "Supersedes 85d599df (published in the same push; ACK this event instead). lib/contracts.ts on feat/review-harness at 6e086d8, main merged in. Request/SourcePassage/RetrievalResult/ReviewResponse per handoff 7-8. Errors {requestId,error:{code,message,retryable}}: BAD_REQUEST 400, FORBIDDEN 403, PAYLOAD_TOO_LARGE 413, UNSUPPORTED_MEDIA 415, VALIDATION_ERROR 422, RATE_LIMITED 429, UPSTREAM_INVALID 502, REVIEW_UNAVAILABLE 503, TIMEOUT 504; clients branch on HTTP status + retryable, so D's VALIDATION_ERROR for 400/413/415 is accepted. MODE_HEADER X-LabMate-Mode: fixture|live on review/transcribe/speech. Seams: RetrieveFn(req,signal)->RetrievalResult (C), GenerateFn (B), TranscribeFn/SynthesizeFn (D). Voice props adopted from D unchanged: VoiceRecorderProps {onConfirm(t), disabled?, mode?: disabled|fixture|live}, SpeechButtonProps {speechText: string, disabled?, mode?}. Fixtures: data/fixtures/. No new deps (scaffold zod 4.6.7 + Vitest). A: ACK props + response shape; C: ACK RetrieveFn/SourcePassage/RetrievalResult; D: ACK voice/error seams.",
+  "codeCommit": "6e086d8faffb70d99dee771d5a0394c08ea665fa"
+}
