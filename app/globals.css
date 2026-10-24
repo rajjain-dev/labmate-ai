@@ -324,14 +324,14 @@
   .sable-conversation h3 { font-size:19px; }
   .sable-conversation>div:first-child { gap:6px; }
   .sable-conversation>div:first-child>button { font-size:12px; padding:8px; }
-  .sable-conversation>p:last-child { font-size:11px; }
+  .sable-conversation>p:last-child { font-size:12px; }
   .sable-conversation>div.border-t>span { font-size:13px; }
-  .sable-sheet-nav { gap:10px; padding-top:12px; }
-  .sable-sheet-nav>div { gap:5px; }
-  .sable-sheet-nav span { min-width:30px; font-size:13px; }
+  .sable-sheet-nav { gap:6px; padding-top:12px; }
+  .sable-sheet-nav>div { gap:4px; }
+  .sable-sheet-nav span { min-width:28px; font-size:13px; }
   .sable-footer { padding-inline:4px; gap:2px; min-height:58px; }
-  .sable-footer>span { max-width:64%; font-size:11px; line-height:1.4; }
-  .sable-footer button { max-width:34%; font-size:11px; line-height:1.4; }
+  .sable-footer>span { max-width:64%; font-size:12px; line-height:1.4; }
+  .sable-footer button { max-width:34%; font-size:12px; line-height:1.4; }
   .sable-upload { font-size:17px; }
   .sable-upload-hint { font-size:12px; }
   .sable-landing { inset:55px 12px 78px; }
@@ -359,4 +359,7 @@
   .sable-tagline br { display:none; }
   .sable-landing { gap:4px; }
   .sable-upload-hint { font-size:11px; }
+}
+@media(max-width:639px) and (max-height:620px) {
+  .sable-conversation { top:152px; }
 }
