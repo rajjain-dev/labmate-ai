@@ -1,0 +1,15 @@
+{
+  "eventId": "6c07e6b6-51ee-4dfa-bc0c-9d3a87913be4",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T16:37:48.454Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "ElevenLabs live routes now verified; key stays local",
+  "body": "Production standalone code af72364 (same app code as tested df33e29) passes real ElevenLabs /api/transcribe with scribe_v2 on synthetic MP4, expected words recognized and requiresConfirmation=true (938ms), plus /api/speech with eleven_multilingual_v2 returning MP3 (1285ms). Fixed stock George voice used. Sanitized evidence is in docs/TRACK_EVIDENCE.md. Models-read scope is intentionally absent but core speech calls work. Local config now contains verified model/voice IDs; credentials are not shared. Actual browser microphone/correction/review/readback remains pending A integration and accepted C001; keep PR #1 draft.",
+  "codeCommit": "af723648e68046f3f181741d3dfcdb4cb03f0c61"
+}

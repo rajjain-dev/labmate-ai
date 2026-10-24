@@ -1,12 +1,12 @@
 {
   "agent": "D",
   "branch": "feat/voice-integration",
-  "updatedAt": "2026-10-24T16:27:01.480Z",
+  "updatedAt": "2026-10-24T16:37:48.348Z",
   "state": "READY",
-  "codeCommit": "df33e29318980c699da8c86c95ce60f053f71bf5",
+  "codeCommit": "af723648e68046f3f181741d3dfcdb4cb03f0c61",
   "contractRevision": "PENDING",
-  "doing": "Voice candidate implemented and tested at df33e29; common scaffold already on main",
-  "next": "B publishes C001; A/B acknowledge voice seams; human configures ElevenLabs key for live checks",
-  "blockers": "C001 PENDING; voice candidate must not merge before shared interface agreement. Human redeeming ElevenLabs credits; no live provider evidence or deployment.",
-  "checks": "On df33e29: npm run check PASS (typecheck, 38 tests, production build and standalone packaging); standalone HTTP smoke PASS (home/static assets, MP4 fixture transcription, MP3 fixture announcement, cross-origin 403, no packaged .env files). No live provider/browser microphone journey tested."
+  "doing": "ElevenLabs live transcription and readback verified through production routes on af72364",
+  "next": "B publishes C001; A/B acknowledge voice seams; assemble and test actual browser recording journey",
+  "blockers": "C001 and A/B/C modules pending. Live provider routes now verified; actual browser flow and deployment not yet verified.",
+  "checks": "Live on af72364 (application code identical to df33e29): /api/transcribe 200 live, scribe_v2, MP4, requiresConfirmation true, 938ms; /api/speech 200 live MP3, eleven_multilingual_v2, 1285ms. GitHub CI af72364 PASS; prior npm run check df33e29 PASS (38 tests/typecheck/build). Credentials remain only in ignored local config. Actual microphone journey unverified."
 }
