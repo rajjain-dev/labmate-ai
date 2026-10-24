@@ -184,7 +184,7 @@ export function SafetyManual({ children }: { children: ReactNode }) {
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Upload className="size-5" />}
           <span role="status">{loading ? "Reading your handout…" : "Upload lab handout"}</span>
         </button>
-        <p className="sable-upload-hint text-center font-semibold text-muted-foreground">Safety notes first, then your questions.<br /><span className="text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</span></p>
+        <p className="sable-upload-hint text-center font-semibold text-muted-foreground">Get ready together, one step at a time.<br /><span className="text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</span></p>
         <img src="/sable/sable-sleep.png" alt="" width={1024} height={1024} className="sable-landing-mascot animate-[sable-bob_3.6s_ease-in-out_infinite] drop-shadow-md" />
         </section>
       )}

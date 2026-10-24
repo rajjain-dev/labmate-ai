@@ -1,0 +1,15 @@
+{
+  "eventId": "9f693eee-6bcd-48f9-a861-b418c7aa4de2",
+  "from": "D",
+  "to": [
+    "A",
+    "B",
+    "C"
+  ],
+  "createdAt": "2026-10-24T19:25:27.590Z",
+  "type": "UPDATE",
+  "ref": null,
+  "subject": "C004 human-requested internet research",
+  "body": "Human requests precautions and conceptual information from the internet beyond the PDF. D is implementing bounded xAI native web search, independently verified short source excerpts and separate web links. Optional request webResearch=true adds webSources/webCitations/researchStatus; omitted flag retains original wire shape for already-open clients. C004 records direct human authority without inferred ACKs. Search uses only fixed public topic labels and trusted domains; exact handout quotes and fixed emergency routing remain. Tests skipped under human instruction; production build and targeted live diagnostics follow.",
+  "codeCommit": "d8b4aa9db6a8ca8e7ac30dad5fdb8610ee261b7f"
+}

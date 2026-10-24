@@ -104,7 +104,7 @@ export interface VoiceCoachProps {
   continuous?: boolean;
   autoStartSignal?: number;
   preparedAudio?: RefObject<AudioContext | null>;
-  onBegin?: () => Promise<string | undefined>;
+  onBegin?: () => Promise<string | { text: string; audioUrl?: string } | undefined>;
   startLabel?: string;
   onTranscript: (transcript: string) => Promise<string | { text: string; endSession?: boolean } | undefined>;
   onActiveChange: (active: boolean) => void;
@@ -197,7 +197,19 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
         setPhase("thinking");
         const introduction = await onBegin();
         if (token !== generation.current) return;
-        if (introduction) { answered = true; await speak(introduction); }
+        if (introduction) {
+          answered = true;
+          const text = typeof introduction === "string" ? introduction : introduction.text;
+          const url = typeof introduction === "string" ? undefined : introduction.audioUrl;
+          let bytes: ArrayBuffer | undefined;
+          if (url) {
+            setPhase("preparing");
+            const response = await fetch(url, { signal: AbortSignal.any([abort.signal, AbortSignal.timeout(10_000)]) });
+            if (response.ok && response.headers.get("Content-Type")?.includes("audio/mpeg")) bytes = await response.arrayBuffer();
+          }
+          if (bytes?.byteLength && bytes.byteLength <= 2 * 1024 * 1024) { setPhase("reading"); await play(audio, bytes, abort.signal); }
+          else await speak(text);
+        }
       } else {
         const response = await fetch("/audio/labmate-intro.mp3", { signal: AbortSignal.any([abort.signal, AbortSignal.timeout(10_000)]) });
         if (!response.ok) throw new VoiceFailure("The voice question could not load. Please try again.");

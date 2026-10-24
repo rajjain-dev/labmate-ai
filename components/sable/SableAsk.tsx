@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import { ArrowDownRight, Loader2, MessageCircle, Mic, Send, Square } from "lucide-react";
 import { VoiceCoach } from "@/components/voice/VoiceCoach";
-import type { ConversationReply } from "@/lib/lab/contracts";
-import { spokenReply, type LabConversation, type Message } from "./useLabConversation";
+import { type LabConversation, type Message } from "./useLabConversation";
 import { cn } from "./utils";
 import { SableAvatar } from "./SableAvatar";
 
 function Reply({ message, onPageChange }: { message: Message; onPageChange: (page: number) => void }) {
   if (message.role === "user") return <article className="rounded-lg bg-secondary/70 p-3"><p className="mb-1 text-xs font-bold text-muted-foreground">YOU</p><p className="whitespace-pre-wrap">{message.text}</p></article>;
+  if (message.role === "prep") return <article className="rounded-lg border border-border/20 bg-paper/60 p-3"><p className="mb-1 text-xs font-bold text-primary">SABLE · GETTING READY {message.step} OF 4</p><p>{message.text}</p><a href={message.source} target="_blank" rel="noopener noreferrer" className="sable-prep-source mt-2 inline-flex items-center text-sm font-bold text-primary underline underline-offset-4">General preparation · ACS reference ↗</a></article>;
   const { reply } = message;
   const precautions = reply.precautions.length > 0 ? <div className="mt-3"><h3 className="font-bold">{message.opening ? "Safety notes and warnings" : "Precautions from your handout"}</h3><ul className="mt-1 list-disc space-y-2 pl-4">{reply.precautions.map((precaution, index) => <li key={index}>{precaution.quote} <button type="button" onClick={() => onPageChange(precaution.page)} className="font-bold text-primary underline underline-offset-2">p. {precaution.page}</button></li>)}</ul></div> : message.opening ? <p className="my-3 rounded-lg bg-hazard/20 p-3">No safety notes could be verified in this handout.{!reply.webSources.some(source => source.kind === "precaution") ? " Ask your TA which precautions apply." : " Online references are listed below."}</p> : null;
   const webReferences = reply.webSources.length > 0 ? <div className="mt-4 border-t border-border/20 pt-3">
@@ -39,28 +39,34 @@ export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, prep
   const [question, setQuestion] = useState("");
   const [typing, setTyping] = useState(false);
   const end = useRef<HTMLDivElement>(null);
-  const { messages, thinking, voiceActive, ask } = conversation;
+  const automaticText = useRef(0);
+  const { messages, thinking, voiceActive } = conversation;
   useEffect(() => { if (open || logOpen) end.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [messages, thinking, open, logOpen]);
+  useEffect(() => {
+    if (!autoStartSignal || automaticText.current === autoStartSignal || !conversation.health || conversation.voiceMode !== "disabled") return;
+    const timer = setTimeout(() => {
+      automaticText.current = autoStartSignal;
+      setOpen(true); setTyping(true);
+      void conversation.begin();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [autoStartSignal, conversation.health, conversation.voiceMode]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     const text = question.trim();
     if (!text || thinking || voiceActive) return;
     setQuestion(""); setLogOpen(true);
-    await ask(text);
+    await conversation.respond(text);
   }
 
   function viewPage(page: number) { onPageChange(page); setOpen(false); setLogOpen(false); }
   async function begin() {
     setLogOpen(false); setOpen(true); setTyping(false);
-    if (conversation.briefed.current) return undefined;
-    const reply = await ask("", true);
-    if (!reply) throw new Error("The briefing could not be prepared.");
-    return spokenReply(reply, true);
+    return conversation.begin();
   }
-  async function answer(transcript: string): Promise<{ text: string; endSession: boolean } | undefined> {
-    const reply: ConversationReply | undefined = await ask(transcript);
-    return reply ? { text: spokenReply(reply), endSession: reply.emergency } : undefined;
+  async function answer(transcript: string): Promise<{ text: string; endSession?: boolean } | undefined> {
+    return conversation.respond(transcript);
   }
 
   return <VoiceCoach mode={conversation.voiceMode} disabled={thinking} continuous stopSignal={conversation.stopSignal} autoStartSignal={autoStartSignal} preparedAudio={preparedAudio}
@@ -74,12 +80,12 @@ export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, prep
           onClick={() => {
             if (active) { toggle(); return; }
             setLogOpen(false); setOpen(true);
-            if (conversation.voiceMode === "disabled") setTyping(true);
+            if (conversation.voiceMode === "disabled") { setTyping(true); void conversation.begin(); }
             else { setTyping(false); toggle(); }
           }}
           className={cn("sable-talk cartoon-sm flex h-12 shrink-0 items-center gap-1 rounded-full py-1 pl-1 pr-3 transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-50", active ? "bg-secondary text-secondary-foreground" : "bg-hazard text-hazard-foreground")}>
           <SableAvatar phase={thinking && phase === "idle" ? "thinking" : phase} awake={open || logOpen} className="!size-12" />
-          <span className="flex flex-col items-start text-left"><span className="flex items-center gap-1.5 font-display text-sm font-semibold">{active ? <Square className="size-3 fill-current" /> : <Mic className="size-3" />}{active ? "End conversation" : conversation.voiceMode === "disabled" ? "Ask Sable" : "Talk to Sable"}</span><span className="text-[9px] font-medium opacity-70" role="status">{active ? phase === "listening" ? "Listening · just ask" : phase === "reading" || phase === "asking" ? "Speaking to you" : "Thinking with you…" : conversation.briefed.current ? "Pick up where we left off" : "Your brief, then your questions"}</span></span>
+          <span className="flex flex-col items-start text-left"><span className="flex items-center gap-1.5 font-display text-sm font-semibold">{active ? <Square className="size-3 fill-current" /> : <Mic className="size-3" />}{active ? "End conversation" : conversation.voiceMode === "disabled" ? "Ask Sable" : "Talk to Sable"}</span><span className="text-[9px] font-medium opacity-70" role="status">{active ? phase === "listening" ? "Listening · your turn" : phase === "reading" || phase === "asking" ? "Speaking to you" : "Thinking with you…" : conversation.briefed.current ? "Pick up where we left off" : "Let’s get ready together"}</span></span>
         </button>
       </div>
       {(open || logOpen) && <section id="sable-conversation" aria-label="SABLE conversation" className="sable-conversation cartoon absolute inset-x-3 bottom-16 z-20 flex h-[min(61dvh,29rem)] flex-col rounded-xl bg-card p-4 text-sm sm:left-auto sm:right-5 sm:w-[min(32rem,calc(100%-2.5rem))]">
@@ -99,8 +105,8 @@ export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, prep
         {typing ? <form onSubmit={submit} className="flex shrink-0 items-end gap-2 border-t border-border/20 pt-3">
           <label className="sr-only" htmlFor="sable-question">Your question for SABLE</label>
           <textarea id="sable-question" rows={2} maxLength={5000} value={question} onChange={event => setQuestion(event.target.value)} disabled={active || thinking} placeholder={active ? "End the voice conversation to type." : "Type a question for SABLE…"} className="min-w-0 flex-1 resize-none rounded-lg border border-border/30 bg-paper p-2 text-sm disabled:opacity-60" />
-          <button type="submit" aria-label="Send question" disabled={active || thinking || !question.trim()} className="cartoon-sm flex size-10 shrink-0 items-center justify-center rounded-full bg-hazard disabled:opacity-40"><Send className="size-4" /></button>
-        </form> : <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border/20 pt-3"><span className="text-[11px] text-muted-foreground">{active ? "Pause after a question. I’ll take it from there." : "One tap for your brief, then just ask."}</span><button type="button" onClick={() => { if (active) toggle(); setTyping(true); }} className="shrink-0 text-xs font-bold text-primary underline underline-offset-4">Type instead</button></div>}
+          <button type="submit" disabled={active || thinking || !question.trim()} className="sable-end-turn cartoon-sm flex shrink-0 items-center justify-center rounded-full bg-hazard font-bold disabled:opacity-40"><Send className="size-4" /><span>End turn</span></button>
+        </form> : <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border/20 pt-3"><span className="text-[11px] text-muted-foreground">{conversation.prepStep ? `Preparation ${conversation.prepStep} of 4 · reply when ready.` : active ? "Pause after a question. I’ll take it from there." : "One tap to pick up our conversation."}</span><button type="button" onClick={() => { if (active) toggle(); setTyping(true); }} className="shrink-0 text-xs font-bold text-primary underline underline-offset-4">Type instead</button></div>}
         <p className="mt-2 shrink-0 text-[10px] leading-snug text-muted-foreground">{conversation.voiceMode === "disabled" ? "Voice is unavailable. You can type a question. " : "Voice uses ElevenLabs. "}Handout text and questions go to xAI. Web searches use public experiment topics. This conversation stays in memory.{conversation.mode === "fixture" ? " Sample mode uses canned responses." : ""}</p>
       </section>}
     </>} />;
