@@ -95,12 +95,12 @@ export function policyResponse(
 export function buildUserPrompt(req: ReviewRequest, passages: SourcePassage[]): string {
   const plan = {
     contextId: req.contextId,
-    goal: req.goal,
-    materials: req.materials,
-    steps: req.steps,
-    equipment: req.equipment,
-    conditions: req.conditions || "(not provided)",
-    question: req.question || "(none)",
+    whatYouAreDoing: req.goal,
+    helpNeeded: req.question,
+    studentDescription: req.steps,
+    ...(req.materials.length ? { materials: req.materials } : {}),
+    ...(req.equipment.length ? { equipment: req.equipment } : {}),
+    ...(req.conditions.trim() ? { additionalContext: req.conditions } : {}),
     inputMode: req.inputMode,
   };
   const sources = passages.map((p) => ({
@@ -118,7 +118,7 @@ export function buildUserPrompt(req: ReviewRequest, passages: SourcePassage[]): 
     "<<<APPROVED_SOURCE_PASSAGES_JSON",
     sources.length ? JSON.stringify(sources, null, 2) : "[] (no approved passages matched; do not claim source support)",
     "APPROVED_SOURCE_PASSAGES_JSON>>>",
-    "Return the review JSON now.",
+    "Answer the help request briefly and offer at most one conceptual follow-up question using the required JSON fields. Return the JSON now.",
   ].join("\n");
 }
 
@@ -148,7 +148,8 @@ export function normalizeModelReview(
 
   let droppedCitations = 0;
   let rewrittenSafety = 0;
-  const findings: Finding[] = m.findings.slice(0, 8).map((f, i) => {
+  let scientificPrompts = 0;
+  const findings: Finding[] = m.findings.slice(0, 8).filter((f) => f.category === "safety" || scientificPrompts++ === 0).map((f, i) => {
     const ids = [...new Set(f.sourceIds)].filter((id) => {
       const ok = validIds.has(id);
       if (!ok) droppedCitations++;
@@ -167,7 +168,7 @@ export function normalizeModelReview(
         id: `f${i + 1}`,
         category: f.category,
         severity: f.severity,
-        title: clip(`Unverified safety point: ${pol(f.title, 100)}`, 100),
+        title: "A safety question to discuss with your TA",
         explanation: UNSUPPORTED_SAFETY_EXPLANATION,
         nextStep: UNSUPPORTED_SAFETY_NEXT_STEP,
         evidence,
@@ -189,17 +190,17 @@ export function normalizeModelReview(
   if (rewrittenSafety > 0) warnings.push(`Rewrote ${rewrittenSafety} safety point(s) without an approved source as questions for your supervisor.`);
 
   const seen = new Set<string>();
-  const missingInformation = [...gaps.map((g) => clip(g, 200)), ...list(m.missingInformation, 6, 200)]
+  const missingInformation = [...gaps.map((g) => clip(g, 200)), ...list(m.missingInformation, 1, 200)]
     .filter((x) => {
       const k = x.toLowerCase();
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
     })
-    .slice(0, 6);
+    .slice(0, 1);
   const questionsForTA = list(m.questionsForTA, 5, 200);
   const limits = [PRODUCT_LIMIT.slice(0, 200), ...list(m.limits, 3, 200)].slice(0, 4);
-  const summary = pol(m.summary, 700) || "Review generated; see findings below.";
+  const summary = pol(m.summary, 500) || "What part would you like help understanding? Tell me where you are getting stuck, and we can work through it together.";
   const state = deriveState(m.state, findings, missingInformation);
   if (languageChanged) warnings.push("Output policy rewrote approval or outcome-prediction language.");
   return { state, summary, missingInformation, findings, questionsForTA, limits, warnings };

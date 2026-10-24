@@ -1,6 +1,6 @@
 # LabMate AI
 
-A working undergraduate teaching-lab preparation MVP: describe an existing plan, review missing information and scientific reasoning, open source excerpts, edit the plan, and ask a TA better questions. Includes consented voice transcription and summary readback. It never approves an experiment.
+An undergraduate teaching-lab preparation coach: share your current thinking, explore one question with a reasoning hint, add your reflection, and continue. Open source excerpts and prepare questions for your TA. Includes consented voice transcription and summary readback. It never approves an experiment.
 
 ## Run locally
 

@@ -94,9 +94,9 @@ describe("audio validation and transcription", () => {
     expect((await transcribe(await audioRequest("short.webm", "audio/wav"))).status).toBe(415);
     expect((await transcribe(await audioRequest("short.webm", "audio/webm", form => form.set("file", new File([], "empty.webm", { type: "audio/webm" }))))).status).toBe(422);
   });
-  it("rejects long or unknown-duration audio even when a caller claims it is short", async () => {
+  it("derives streaming duration and rejects long audio or client duration claims", async () => {
     expect((await transcribe(await audioRequest("too-long.webm"))).status).toBe(422);
-    expect((await transcribe(await audioRequest("unknown-duration.webm"))).status).toBe(422);
+    expect((await transcribe(await audioRequest("unknown-duration.webm"))).status).toBe(200);
     expect((await transcribe(await audioRequest("short.webm", "audio/webm", form => form.set("duration", "1")))).status).toBe(422);
   });
   it("rejects missing consent, duplicate files and excessive bytes before forwarding", async () => {

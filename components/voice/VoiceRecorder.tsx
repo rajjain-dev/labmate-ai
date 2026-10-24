@@ -10,6 +10,7 @@ export interface VoiceRecorderProps {
 }
 
 type Phase = "idle" | "permission" | "recording" | "transcribing" | "draft";
+class TranscriptionError extends Error {}
 
 export function VoiceRecorder({ onConfirm, disabled = false, mode = "disabled" }: VoiceRecorderProps) {
   const id = useId();
@@ -66,7 +67,7 @@ export function VoiceRecorder({ onConfirm, disabled = false, mode = "disabled" }
       setError("Recording is unavailable in this browser. Please type your plan.");
       return;
     }
-    const mimeType = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"].find(type => MediaRecorder.isTypeSupported(type));
+    const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"].find(type => MediaRecorder.isTypeSupported(type));
     if (!mimeType) { setError("This browser has no supported recording format. Please type your plan."); return; }
     const token = ++generation.current;
     stopResources();
@@ -108,17 +109,24 @@ export function VoiceRecorder({ onConfirm, disabled = false, mode = "disabled" }
           form.set("file", new Blob(chunks, { type: mimeType }), mimeType.startsWith("audio/mp4") ? "recording.mp4" : "recording.webm");
           form.set("consent", "true");
           const response = await fetch("/api/transcribe", { method: "POST", body: form, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(16_000)]) });
-          if (!response.ok) throw new Error("Transcription is unavailable. Please type your plan or try another browser.");
+          if (!response.ok) {
+            const failure = await response.json().catch(() => null);
+            const message = failure?.error?.message;
+            throw new TranscriptionError(typeof message === "string" && message.length > 0 && message.length <= 300
+              ? message : "Transcription is unavailable. Please try again or type your plan.");
+          }
           const data = await response.json();
           const returnedMode = response.headers.get("X-LabMate-Mode");
           if (data.requiresConfirmation !== true || typeof data.transcript !== "string" || !data.transcript.trim() || data.transcript.length > 5000 || !["fixture", "live"].includes(returnedMode ?? "")) {
-            throw new Error("The transcript could not be read. Please type your plan.");
+            throw new TranscriptionError("The transcript could not be read. Please record again or type your plan.");
           }
           if (token !== generation.current) return;
           setTranscript(data.transcript); setResultMode(returnedMode!); setConfirmed(false); setPhase("draft");
-        } catch {
+        } catch (failure) {
           if (token !== generation.current) return;
-          setError("Transcription is unavailable. Please type your plan or try another browser."); setPhase("idle");
+          setError(failure instanceof TranscriptionError ? failure.message
+            : failure instanceof Error && failure.name === "TimeoutError" ? "Transcription timed out. Try a shorter recording."
+            : "Transcription is unavailable. Please try again or type your plan."); setPhase("idle");
         } finally { if (controller.current === abort) controller.current = null; }
       };
       current.start(250);

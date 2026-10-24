@@ -11,3 +11,11 @@ Use Node 24, npm ci, npm run build, then supply the runtime environment and run 
 The first real review returned HTTP 200, mode live, generation grok, state needs_clarification, three local sources and two findings in approximately 4.1 seconds using grok-4.20-0309-non-reasoning. This is one functioning live request, not an accuracy or safety evaluation. Prior live ElevenLabs server-route evidence is in TRACK_EVIDENCE.md. Production compilation passes. Test suites were skipped at the human's request; CI test execution is temporarily opt-in via repository variable LABMATE_RUN_TESTS=true. No claim is made that the changed MVP passed those suites.
 
 Remaining release work: actual human microphone/browser flow, instructor/source applicability review, deployment URL, root license/public-release decision and submission materials. Keep provider credit limits in the vendors' dashboards.
+
+## Simple coaching interaction
+
+The human clarified that LabMate should guide students, and requested only two prompts: “What are you doing?” and “What do you need help with?” The screen now asks just those questions. The answer focuses on the requested help with a brief explanation and at most one scientific follow-up. Students can reply and continue; sources, limits, voice and readback are optional disclosures. No grades, completeness checklist, scientific severity badges or whole-plan verdicts are presented. The model is instructed to build on the student's latest thinking. Safety escalation remains explicit.
+
+C001 transport stays unchanged: the complete description is preserved in goal, its opening text is mirrored into the compatibility steps field, the help request is question, and bounded follow-up context is conditions. No materials, equipment, quantities or procedure are invented. Empty optional fields do not automatically trigger a checklist. Local context exists only in the current page's memory.
+
+Streaming browser WebM/Opus audio now derives duration from bounded packet timing as well as container metadata. The 30-second/5-MiB limits and transcript confirmation remain. Server errors are shown in sanitized form. No extra server executable is required.
