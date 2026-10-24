@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import { ArrowDownRight, Loader2, MessageCircle, Mic, Send, Square } from "lucide-react";
 import { VoiceCoach } from "@/components/voice/VoiceCoach";
 import type { ConversationReply } from "@/lib/lab/contracts";
@@ -11,16 +11,19 @@ import { SableAvatar } from "./SableAvatar";
 function Reply({ message, onPageChange }: { message: Message; onPageChange: (page: number) => void }) {
   if (message.role === "user") return <article className="rounded-lg bg-secondary/70 p-3"><p className="mb-1 text-xs font-bold text-muted-foreground">YOU</p><p className="whitespace-pre-wrap">{message.text}</p></article>;
   const { reply } = message;
+  const precautions = reply.precautions.length > 0 ? <div className="mt-3"><h3 className="font-bold">{message.opening ? "Safety notes and warnings" : "Precautions from your handout"}</h3><ul className="mt-1 list-disc space-y-2 pl-4">{reply.precautions.map((precaution, index) => <li key={index}>{precaution.quote} <button type="button" onClick={() => onPageChange(precaution.page)} className="font-bold text-primary underline underline-offset-2">p. {precaution.page}</button></li>)}</ul></div> : message.opening ? <p className="my-3 rounded-lg bg-hazard/20 p-3">No safety notes could be verified in this handout. Ask your TA which precautions apply.</p> : null;
   return <article className="rounded-lg border border-border/20 bg-paper/60 p-3">
     <p className="mb-1 text-xs font-bold text-primary">{reply.mode === "fixture" ? "SAMPLE RESPONSE" : message.opening ? "SABLE · YOUR LAB BRIEF" : "SABLE"}</p>
+    {message.opening && precautions}
+    {message.opening && <h3 className="mt-4 mb-2 font-bold">Key points</h3>}
     <p className="whitespace-pre-wrap">{reply.answer}</p>
-    {reply.precautions.length > 0 && <div className="mt-3"><h3 className="font-bold">Precautions from your handout</h3><ul className="mt-1 list-disc space-y-2 pl-4">{reply.precautions.map((precaution, index) => <li key={index}>{precaution.quote} <button type="button" onClick={() => onPageChange(precaution.page)} className="font-bold text-primary underline underline-offset-2">p. {precaution.page}</button></li>)}</ul></div>}
+    {!message.opening && precautions}
     {reply.citations.length > 0 && <div className="mt-2 flex flex-wrap items-center gap-2 text-xs"><span>From your handout:</span>{reply.citations.map(page => <button type="button" key={page} onClick={() => onPageChange(page)} className="font-bold text-primary underline underline-offset-2">p. {page}</button>)}</div>}
   </article>;
 }
 
 /** The existing voice engine, presented through the original Sable controls. */
-export function SableAsk({ conversation, onPageChange }: { conversation: LabConversation; onPageChange: (page: number) => void }) {
+export function SableAsk({ conversation, onPageChange, autoStartSignal = 0, preparedAudio }: { conversation: LabConversation; onPageChange: (page: number) => void; autoStartSignal?: number; preparedAudio?: RefObject<AudioContext | null> }) {
   const [open, setOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [question, setQuestion] = useState("");
@@ -39,6 +42,7 @@ export function SableAsk({ conversation, onPageChange }: { conversation: LabConv
 
   function viewPage(page: number) { onPageChange(page); setOpen(false); setLogOpen(false); }
   async function begin() {
+    setLogOpen(false); setOpen(true); setTyping(false);
     if (conversation.briefed.current) return undefined;
     const reply = await ask("", true);
     if (!reply) throw new Error("The briefing could not be prepared.");
@@ -49,7 +53,7 @@ export function SableAsk({ conversation, onPageChange }: { conversation: LabConv
     return reply ? { text: spokenReply(reply), endSession: reply.emergency } : undefined;
   }
 
-  return <VoiceCoach mode={conversation.voiceMode} disabled={thinking} continuous stopSignal={conversation.stopSignal}
+  return <VoiceCoach mode={conversation.voiceMode} disabled={thinking} continuous stopSignal={conversation.stopSignal} autoStartSignal={autoStartSignal} preparedAudio={preparedAudio}
     onBegin={begin} onTranscript={answer} onActiveChange={conversation.setVoiceActive} onCancel={conversation.cancelPending}
     renderControls={({ active, phase, status, error, notice, toggle }) => <>
       <div className="sable-controls flex shrink-0 items-center gap-2">

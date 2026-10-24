@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { TranscribeResponseSchema, type VoiceMode } from "@/lib/contracts";
 
 const QUESTION = "What are you doing, and what would you like help with?";
@@ -102,6 +102,8 @@ export interface VoiceCoachProps {
   disabled?: boolean;
   stopSignal?: number;
   continuous?: boolean;
+  autoStartSignal?: number;
+  preparedAudio?: RefObject<AudioContext | null>;
   onBegin?: () => Promise<string | undefined>;
   startLabel?: string;
   onTranscript: (transcript: string) => Promise<string | { text: string; endSession?: boolean } | undefined>;
@@ -110,7 +112,7 @@ export interface VoiceCoachProps {
   renderControls?: (controls: VoiceCoachControls) => ReactNode;
 }
 
-export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous = false, onBegin, startLabel = "Talk to LabMate", onTranscript, onActiveChange, onCancel, renderControls }: VoiceCoachProps) {
+export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous = false, autoStartSignal = 0, preparedAudio, onBegin, startLabel = "Talk to LabMate", onTranscript, onActiveChange, onCancel, renderControls }: VoiceCoachProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -119,6 +121,7 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
   const microphone = useRef<MediaStream | null>(null);
   const context = useRef<AudioContext | null>(null);
   const finish = useRef<(() => void) | null>(null);
+  const automaticStart = useRef(0);
   const active = phase !== "idle";
 
   function cleanup() {
@@ -137,6 +140,17 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
     document.addEventListener("visibilitychange", hide);
     return () => document.removeEventListener("visibilitychange", hide);
   }, []);
+  useEffect(() => {
+    if (!autoStartSignal || automaticStart.current === autoStartSignal || disabled || mode === "disabled") return;
+    // Deferring one task lets the handout's history reset settle, and avoids
+    // starting during React development mode's effect replay.
+    const timer = setTimeout(() => {
+      if (controller.current) return;
+      automaticStart.current = autoStartSignal;
+      void start();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [autoStartSignal, disabled, mode]);
 
   async function start() {
     if (active || disabled || mode === "disabled") return;
@@ -148,13 +162,13 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
     const abort = new AbortController(); controller.current = abort;
     let answered = false;
     try {
-      // Unlock audio during the button gesture; no autoplay prompt is needed.
-      const audio = new AudioContext(); context.current = audio;
+      // Upload can hand off a context unlocked in the file-picker gesture.
+      const ready = preparedAudio?.current;
+      const audio = ready && ready.state !== "closed" ? ready : new AudioContext();
+      if (preparedAudio) preparedAudio.current = null;
+      context.current = audio;
       const resumed = audio.resume();
       void resumed.catch(() => {});
-      const acquired = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
-      if (token !== generation.current) { acquired.getTracks().forEach(track => track.stop()); return; }
-      microphone.current = acquired;
       await resumed;
 
       async function speak(text: string) {
@@ -169,12 +183,13 @@ export function VoiceCoach({ mode, disabled = false, stopSignal = 0, continuous 
         }
         if (remaining) clips.push(remaining);
         for (const clip of clips) {
-          abort.signal.throwIfAborted(); setPhase("reading");
+          abort.signal.throwIfAborted(); setPhase("preparing");
           const response = await fetch("/api/speech", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: clip, consent: true }), signal: AbortSignal.any([abort.signal, AbortSignal.timeout(16_000)]) });
           if (!response.ok) throw await responseError(response);
           if (response.headers.get("X-LabMate-Mode") !== mode || !response.headers.get("Content-Type")?.includes("audio/mpeg")) throw new VoiceFailure("The spoken answer could not play.");
           const bytes = await response.arrayBuffer();
           if (!bytes.byteLength || bytes.byteLength > 2 * 1024 * 1024) throw new VoiceFailure("The spoken answer could not play.");
+          setPhase("reading");
           await play(audio, bytes, abort.signal);
         }
       }

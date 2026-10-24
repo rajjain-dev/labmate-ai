@@ -9,12 +9,19 @@ export type Message =
   | { id: string; role: "assistant"; reply: ConversationReply; opening: boolean };
 
 export function spokenReply(reply: ConversationReply, opening = false): string {
+  if (opening) return [
+    reply.mode === "fixture" ? "Sample mode." : "",
+    "Hi, I’m Sable. Let’s go over some key safety things first.",
+    ...(reply.precautions.length ? ["Your handout gives these precautions and warnings.", ...reply.precautions.map(item => item.quote)]
+      : ["I couldn’t verify any safety notes in this handout. Ask your TA which precautions apply before beginning."]),
+    "Now, the key points.",
+    reply.answer,
+    "What would you like to know? You can ask me anything about your experiment.",
+  ].filter(Boolean).join(" ");
   return [
     reply.mode === "fixture" ? "Sample mode." : "",
-    opening ? "Hi, I’m Sable, your lab companion." : "",
     reply.answer,
     ...(reply.precautions.length ? ["The handout lists these precautions.", ...reply.precautions.map(item => item.quote)] : []),
-    opening ? "What would you like to ask?" : "",
   ].filter(Boolean).join(" ");
 }
 

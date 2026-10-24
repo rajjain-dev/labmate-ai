@@ -72,9 +72,19 @@ export function SafetyManual({ children }: { children: ReactNode }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const upload = useRef<AbortController | null>(null);
   const [loading, setLoading] = useState(false);
+  const [autoStartSignal, setAutoStartSignal] = useState(0);
+  const preparedAudio = useRef<AudioContext | null>(null);
   const emergency = useRef<HTMLDialogElement>(null);
   const conversation = useLabConversation(mod?.document ?? null);
-  useEffect(() => () => { upload.current?.abort(); }, []);
+  useEffect(() => () => { upload.current?.abort(); void preparedAudio.current?.close().catch(() => {}); }, []);
+
+  function preparePlayback() {
+    if (typeof AudioContext === "undefined" || conversation.voiceMode === "disabled") return;
+    try {
+      if (!preparedAudio.current || preparedAudio.current.state === "closed") preparedAudio.current = new AudioContext();
+      void preparedAudio.current.resume().catch(() => {});
+    } catch { /* Upload and optional typing remain available. */ }
+  }
 
   const onFile = async (file?: File) => {
     if (!file) return;
@@ -85,6 +95,7 @@ export function SafetyManual({ children }: { children: ReactNode }) {
       const loaded = await readModule(file, abort.signal);
       if (abort.signal.aborted) return;
       setZoom(1); setPageIndex(0); setLeaving(false); setAnim("rise"); setMod(loaded);
+      setAutoStartSignal(value => value + 1);
       toast.success(`Loaded "${file.name}" — ${loaded.pages.length} page${loaded.pages.length === 1 ? "" : "s"}`);
     } catch (e) {
       if (!abort.signal.aborted) toast.error(e instanceof Error ? e.message : "The handout could not be read.");
@@ -162,18 +173,18 @@ export function SafetyManual({ children }: { children: ReactNode }) {
           type="button"
           aria-label="Upload lab handout"
           disabled={loading}
-          onClick={() => fileRef.current?.click()}
+          onClick={() => { preparePlayback(); fileRef.current?.click(); }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
-            if (!loading) void onFile(e.dataTransfer.files[0]);
+            if (!loading) { preparePlayback(); void onFile(e.dataTransfer.files[0]); }
           }}
           className="sable-upload cartoon-sm flex items-center gap-2 rounded-full bg-hazard font-display font-bold text-hazard-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0"
         >
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Upload className="size-5" />}
           <span role="status">{loading ? "Reading your handout…" : "Upload lab handout"}</span>
         </button>
-        <p className="sable-upload-hint text-center font-semibold text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</p>
+        <p className="sable-upload-hint text-center font-semibold text-muted-foreground">Safety notes first, then your questions.<br /><span className="text-muted-foreground">PDF, TXT or MD · up to 25 pages · 5 MiB</span></p>
         <img src="/sable/sable-sleep.png" alt="" width={1024} height={1024} className="sable-landing-mascot animate-[sable-bob_3.6s_ease-in-out_infinite] drop-shadow-md" />
         </section>
       )}
@@ -224,7 +235,7 @@ export function SafetyManual({ children }: { children: ReactNode }) {
                 </p>
               </div>
               <div className="sable-sheet-controls">
-                <SableAsk conversation={conversation} onPageChange={number => {
+                <SableAsk conversation={conversation} autoStartSignal={autoStartSignal} preparedAudio={preparedAudio} onPageChange={number => {
                   const index = mod.document.pages.findIndex(page => page.number === number);
                   if (index >= 0) { setPageIndex(index); setZoom(1); }
                 }} />
