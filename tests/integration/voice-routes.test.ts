@@ -10,6 +10,7 @@ const origin = "http://localhost:3000";
 beforeEach(async () => {
   vi.restoreAllMocks(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.resetModules();
   vi.stubEnv("ENABLE_VOICE", "true"); vi.stubEnv("APP_MODE", "fixture");
+  vi.stubEnv("APP_ORIGIN", "");
   vi.stubEnv("VOICE_SUPERVISED_DEMO", "false"); vi.stubEnv("VOICE_MAX_PROVIDER_CALLS", "0");
   vi.stubEnv("ELEVENLABS_API_KEY", "test-secret-never-echo");
   vi.stubEnv("ELEVENLABS_STT_MODEL", "test-stt");
@@ -47,6 +48,15 @@ describe("voice transport and mode boundaries", () => {
   it("rejects cross-origin calls before a provider call", async () => {
     const request = speechRequest(undefined, { headers: { Origin: "https://elsewhere.example", "Content-Type": "application/json" } });
     expect((await speech(request)).status).toBe(403);
+  });
+  it("accepts the browser host when Next uses an internal request hostname", async () => {
+    const request = new Request("http://localhost:3000/api/speech", { method: "POST", headers: { Host: "127.0.0.1:3000", Origin: "http://127.0.0.1:3000", "Content-Type": "application/json" }, body: JSON.stringify({ text: "summary", consent: true }) });
+    expect((await speech(request)).status).toBe(200);
+  });
+  it("uses a fixed configured proxy origin and ignores X-Forwarded-Host", async () => {
+    vi.stubEnv("APP_ORIGIN", "https://labmate.example");
+    expect((await speech(speechRequest(undefined, { headers: { "Content-Type": "application/json", Host: "internal:3000", Origin: "https://labmate.example" } }))).status).toBe(200);
+    expect((await speech(speechRequest(undefined, { headers: { "Content-Type": "application/json", Host: "internal:3000", "X-Forwarded-Host": "other.example", Origin: "https://other.example" } }))).status).toBe(403);
   });
   it.each([{ text: "hello", consent: false }, { text: "", consent: true }, { text: "a".repeat(901), consent: true }, { text: "hi", consent: true, voiceId: "override" }])("rejects invalid speech payload %j", async body => {
     expect((await speech(speechRequest(body))).status).toBe(422);

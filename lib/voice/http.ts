@@ -42,7 +42,14 @@ export async function readBoundedBody(source: Request | Response, limit: number,
 
 export function enforceOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && origin !== new URL(request.url).origin)) {
+  // Next's standalone request URL may use an internal hostname. Compare the
+  // browser Origin to the incoming Host, or a fixed deployment origin. Never
+  // trust a caller-supplied X-Forwarded-Host to widen the allowed origin.
+  const url = new URL(request.url);
+  let expected: string;
+  try { expected = new URL(process.env.APP_ORIGIN || `${url.protocol}//${request.headers.get("host") || url.host}`).origin; }
+  catch { throw new VoiceError(503, "REVIEW_UNAVAILABLE", "The application origin is not configured."); }
+  if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && origin !== expected)) {
     throw new VoiceError(403, "FORBIDDEN", "Use voice from this application's page.");
   }
 }
