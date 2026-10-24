@@ -15,3 +15,7 @@ Owner: D. Current contract evidence is recorded below. Pending proposals are not
 - Fixtures checked: B READY code `6e086d8` passes its 23 tests, typecheck and build. An isolated B+D assembly passes 64 existing tests and compatibility typecheck, while six additional review regressions reproduce unresolved B defects. See `docs/ROLE_REVIEW.md`.
 
 After agreement, D records ACCEPTED, the exact signatures, acknowledged scope and target commit. Later changes get new IDs such as C002. Do not overwrite the history of C001.
+
+## MVP delivery direction from the human
+
+The human explicitly requested finishing the MVP faster, said D may need to complete the other roles, and then requested skipping tests. D is completing missing UI/evidence and necessary backend repairs in one isolated assembly using B's unchanged C001 wire contracts. This is direct human authorization for the expanded implementation scope and test-suite omission; it is not a claim that A/C sent ACKs. Original peer status and proposal history remain intact. The complete assembled commit will be recorded after compilation, with the actual test omission disclosed.

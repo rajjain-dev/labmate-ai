@@ -108,7 +108,7 @@ export function deriveState(modelState: ReviewState, findings: Finding[], missin
 
 // --- Output language policy
 const BANNED: Array<[RegExp, string]> = [
-  [/\b\d{1,3}(\.\d+)?\s?(%|percent)\s?(chance|probability|likel\w*|success\w*|confiden\w*)?/gi, "[no outcome estimate]"],
+  [/\b\d{1,3}(\.\d+)?\s?(%|percent)\s*(chance|probability|likel\w*|success\w*|confiden\w*)\b/gi, "[no outcome estimate]"],
   [/\b(is|are|it'?s|looks|seems|appears)\s+(completely |perfectly |totally )?safe\b/gi, "has been reviewed only for the listed concerns"],
   [/\bsafe to (proceed|perform|do|conduct|run|go ahead)\b/gi, "for your supervisor to check"],
   [/\b(approved?|authori[sz]ed?|cleared) (to|for) (proceed|go|start|perform|run)\b/gi, "to discuss with your supervisor"],

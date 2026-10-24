@@ -3,6 +3,8 @@
  * Env: XAI_API_KEY, XAI_MODEL (a model verified in the team's account — do not guess).
  */
 import type { GenerateFn } from "../contracts";
+import { reserveReviewAttempt } from "../harness/budget";
+import { readBoundedBody } from "../voice/http";
 
 const XAI_URL = "https://api.x.ai/v1/responses";
 
@@ -33,6 +35,7 @@ export function createGrokGenerate(env: Record<string, string | undefined> = pro
   const model = env.XAI_MODEL;
   if (!key || !model) return null;
   return async (input, signal) => {
+    reserveReviewAttempt();
     const res = await fetch(XAI_URL, {
       method: "POST",
       signal,
@@ -40,6 +43,7 @@ export function createGrokGenerate(env: Record<string, string | undefined> = pro
       body: JSON.stringify({
         model,
         store: false,
+        max_output_tokens: 2400,
         input: [
           { role: "system", content: input.system },
           { role: "user", content: input.user },
@@ -50,10 +54,11 @@ export function createGrokGenerate(env: Record<string, string | undefined> = pro
       }),
     });
     if (!res.ok) {
+      await res.body?.cancel();
       // Never forward provider error bodies to clients; log status only.
       throw new ProviderError(res.status, `Grok HTTP ${res.status}`);
     }
-    const data = await res.json();
+    const data = JSON.parse(new TextDecoder().decode(await readBoundedBody(res, 128 * 1024, signal)));
     return { text: extractOutputText(data), model: typeof data?.model === "string" ? data.model : model };
   };
 }

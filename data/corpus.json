@@ -1,0 +1,38 @@
+[
+  {
+    "sourceId": "nist-objectives-001",
+    "documentId": "nist-pri31",
+    "title": "NIST: experimental objectives",
+    "locator": "Engineering Statistics Handbook, §5.3.1, opening paragraph",
+    "excerpt": "All of the objectives should be written down, even the \"unspoken\" ones.",
+    "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri31.htm",
+    "sourceKind": "general_guidance",
+    "version": "web-2026-10-24",
+    "reviewedOn": "2026-10-24",
+    "tags": ["goal", "compare", "objective", "plan", "question", "design"]
+  },
+  {
+    "sourceId": "nist-variables-001",
+    "documentId": "nist-pri32",
+    "title": "NIST: factors and responses",
+    "locator": "Engineering Statistics Handbook, §5.3.2, first paragraph and guidelines",
+    "excerpt": "Process variables include both inputs and outputs - i.e., factors and responses. […] Include all relevant responses.",
+    "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri32.htm",
+    "sourceKind": "general_guidance",
+    "version": "web-2026-10-24",
+    "reviewedOn": "2026-10-24",
+    "tags": ["temperature", "water", "sugar", "amount", "time", "volume", "measurement", "control", "variable", "condition"]
+  },
+  {
+    "sourceId": "nist-replication-001",
+    "documentId": "nist-pri331",
+    "title": "NIST: replication in comparisons",
+    "locator": "Engineering Statistics Handbook, §5.3.3.1, Three key numbers and Balance",
+    "excerpt": "n = number of replications […] Balance dictates that the number of replications be the same at each level of the factor",
+    "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri331.htm",
+    "sourceKind": "general_guidance",
+    "version": "web-2026-10-24",
+    "reviewedOn": "2026-10-24",
+    "tags": ["compare", "repeat", "trial", "replication", "temperature", "dissolving", "design"]
+  }
+]

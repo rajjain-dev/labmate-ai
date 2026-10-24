@@ -13,6 +13,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "review:fixture": "node skills/labmate-review/scripts/review.mjs data/fixtures/request-water-sugar.json",
     "check": "npm run typecheck && npm test && npm run build"
   },
   "dependencies": {

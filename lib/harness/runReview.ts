@@ -153,13 +153,16 @@ export function normalizeModelReview(
     }).slice(0, 3);
     let evidence = f.evidence;
     if (evidence === "source_backed" && ids.length === 0) evidence = "unknown";
+    // This MVP's NIST pack supports design reasoning, not chemical safety rules.
+    if (f.category === "safety" && !sources.some(source => ids.includes(source.sourceId) && source.sourceKind !== "general_guidance")) evidence = "unknown";
+    const unsupportedSafety = f.category === "safety" && evidence !== "source_backed";
     return {
       id: `f${i + 1}`,
       category: f.category,
       severity: f.severity,
-      title: pol(f.title, 100),
-      explanation: pol(f.explanation, 600),
-      nextStep: pol(f.nextStep, 300),
+      title: unsupportedSafety ? "Supervisor clarification needed" : pol(f.title, 100),
+      explanation: unsupportedSafety ? "This safety concern has no supporting passage in the selected source pack. Its requirements cannot be established by this review." : pol(f.explanation, 600),
+      nextStep: unsupportedSafety ? "Ask your lab supervisor or TA which requirements apply to your exact materials and course protocol." : pol(f.nextStep, 300),
       evidence,
       sourceIds: ids,
     };

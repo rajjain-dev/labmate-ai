@@ -1,0 +1,13 @@
+# Working MVP
+
+The human asked D to complete other roles to finish faster and explicitly requested skipping tests. D assembled B's latest backend (`e4c34ad`) with the tested voice slice, then completed the student UI, local NIST retrieval and backend review fixes on `codex/mvp-assembly`. A/C's separate branch records are not marked complete on their behalf.
+
+The app supports typed input, a Grok review, clarification edits, inspectable source excerpts, fixed emergency guidance, explicit fixture mode, microphone consent, editable/confirmed transcripts and summary readback. The local source pack contains three official NIST experimental-design excerpts, with provenance in data/SOURCE_LICENSES.md. It is not a course protocol or SDS pack. Snowflake and camera are excluded from this MVP.
+
+Live setup uses server-only XAI_API_KEY, XAI_MODEL, and the ElevenLabs values from .env.example. Credentials remain in ignored .env.local. For a supervised local process set APP_MODE=live, REVIEW_SUPERVISED_DEMO=true, REVIEW_MAX_PROVIDER_CALLS=30, ENABLE_VOICE=true, VOICE_SUPERVISED_DEMO=true and VOICE_MAX_PROVIDER_CALLS=30. Each provider attempt counts toward its per-process allowance; restart resets it. Public/serverless live operation requires a distributed limiter. Public deployments should keep fixture mode until that control is available.
+
+Use Node 24, npm ci, npm run build, then supply the runtime environment and run npm start. npm run dev loads .env.local automatically. The standalone npm start needs environment variables provided by its host, or can be launched locally with `node --env-file=.env.local .next/standalone/server.js`. The build output deliberately excludes local .env files.
+
+The first real review returned HTTP 200, mode live, generation grok, state needs_clarification, three local sources and two findings in approximately 4.1 seconds using grok-4.20-0309-non-reasoning. This is one functioning live request, not an accuracy or safety evaluation. Prior live ElevenLabs server-route evidence is in TRACK_EVIDENCE.md. Production compilation passes. Test suites were skipped at the human's request; CI test execution is temporarily opt-in via repository variable LABMATE_RUN_TESTS=true. No claim is made that the changed MVP passed those suites.
+
+Remaining release work: actual human microphone/browser flow, instructor/source applicability review, deployment URL, root license/public-release decision and submission materials. Keep provider credit limits in the vendors' dashboards.

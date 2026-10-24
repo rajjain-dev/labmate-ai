@@ -18,6 +18,9 @@ import { HarnessError, runReview, policyResponse } from "./runReview";
 import { POLICY_VERSION, detectEmergency, detectOutOfScope } from "./policy";
 import { createGrokGenerate } from "../providers/grok";
 import waterSugarResponse from "../../data/fixtures/response-water-sugar.json";
+import { readBoundedBody, VoiceError } from "../voice/http";
+import { localRetrieve, retrieveLocalPassages } from "../providers/local";
+import { reviewConfigured } from "./budget";
 
 export const MAX_BODY_BYTES = 16 * 1024;
 
@@ -93,8 +96,8 @@ const hits = new Map<string, number[]>();
 const inflight = new Map<string, number>();
 
 export function clientKey(req: Request): string {
-  const fwd = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return fwd || req.headers.get("x-real-ip") || "local";
+  // A strict process-wide demo budget cannot be bypassed with supplied IP headers.
+  return "supervised-demo";
 }
 
 function takeSlot(key: string, now: number): number | null {
@@ -114,7 +117,7 @@ export function _resetRateLimit() {
 }
 
 /** Build live dependencies. `retrieve` is injected by integration (C's adapter); null until merged. */
-export function liveDependencies(retrieve: ReviewDependencies["retrieve"] = null): ReviewDependencies {
+export function liveDependencies(retrieve: ReviewDependencies["retrieve"] = localRetrieve): ReviewDependencies {
   return { retrieve, generate: createGrokGenerate(), clock: () => Date.now(), makeId: () => randomUUID() };
 }
 
@@ -132,7 +135,9 @@ export function fixtureReview(input: unknown, cfg: ServerConfig): ReviewResponse
     ...base,
     requestId: randomUUID(),
     clientRequestId: req.clientRequestId,
-    meta: { ...base.meta, mode: "fixture", generation: "fixture", latencyMs: 0, warnings: ["Fixture mode: canned example review, not generated for this input."] },
+    sources: retrieveLocalPassages(req).passages,
+    limits: [base.limits[0], "Canned demonstration; NIST passages provide general experimental-design context, not a course protocol or safety approval."],
+    meta: { ...base.meta, mode: "fixture", generation: "fixture", retrieval: "local", latencyMs: 0, warnings: ["Fixture mode: canned example review, not generated for this input."] },
   };
 }
 
@@ -140,12 +145,13 @@ export async function handleReviewPost(
   req: Request,
   opts: { config?: ServerConfig; deps?: ReviewDependencies } = {},
 ): Promise<Response> {
+  const signal = AbortSignal.any([req.signal, AbortSignal.timeout(25_000)]);
   const cfg = opts.config ?? readConfig();
   const origin = originProblem(req, cfg);
   if (origin === "misconfigured") return errorResponse("REVIEW_UNAVAILABLE", "The application origin is not configured.");
   if (origin === "forbidden") return errorResponse("FORBIDDEN", "Use LabMate from this application's page.");
   const ct = req.headers.get("content-type") ?? "";
-  if (!ct.toLowerCase().includes("application/json")) return errorResponse("UNSUPPORTED_MEDIA", "Use application/json.");
+  if (ct.split(";")[0].trim().toLowerCase() !== "application/json") return errorResponse("UNSUPPORTED_MEDIA", "Use application/json.");
   const len = Number(req.headers.get("content-length") ?? "0");
   if (len > MAX_BODY_BYTES) return errorResponse("PAYLOAD_TOO_LARGE", "Request body exceeds 16 KiB.");
 
@@ -155,8 +161,7 @@ export async function handleReviewPost(
 
   inflight.set(key, (inflight.get(key) ?? 0) + 1);
   try {
-    const raw = await req.text();
-    if (new TextEncoder().encode(raw).byteLength > MAX_BODY_BYTES) return errorResponse("PAYLOAD_TOO_LARGE", "Request body exceeds 16 KiB.");
+    const raw = new TextDecoder().decode(await readBoundedBody(req, MAX_BODY_BYTES, signal));
     let body: unknown;
     try {
       body = JSON.parse(raw);
@@ -168,10 +173,13 @@ export async function handleReviewPost(
       return errorResponse("VALIDATION_ERROR", check.error.issues.map((i) => `${i.path.join(".") || "body"}: ${i.message}`).join("; ").slice(0, 500));
     }
     if (cfg.appMode === "fixture") return json(fixtureReview(check.data, cfg), 200, { [MODE_HEADER]: "fixture" });
+    if (!opts.deps && !reviewConfigured(process.env)) return errorResponse("REVIEW_UNAVAILABLE", "Live reviews need configured xAI access and a supervised demo budget.");
     const deps = opts.deps ?? liveDependencies();
-    const result = await runReview(check.data, deps, { corpusVersion: cfg.corpusVersion, signal: req.signal });
+    const result = await runReview(check.data, deps, { corpusVersion: cfg.corpusVersion, signal });
     return json(result, 200, { [MODE_HEADER]: result.meta.mode });
   } catch (e) {
+    if (signal.aborted) return errorResponse("TIMEOUT", "Review timed out or was cancelled.");
+    if (e instanceof VoiceError && e.status === 413) return errorResponse("PAYLOAD_TOO_LARGE", "Request body exceeds 16 KiB.");
     if (e instanceof HarnessError) return errorResponse(e.code, e.message);
     return errorResponse("REVIEW_UNAVAILABLE", "Review unavailable.");
   } finally {
@@ -189,10 +197,10 @@ export function handleHealth(env: Record<string, string | undefined> = process.e
     policyVersion: POLICY_VERSION,
     corpusVersion: cfg.corpusVersion,
     capabilities: {
-      review: cfg.appMode === "fixture" ? "fixture" : liveReady ? "live" : "unconfigured",
-      retrieval: cfg.retrievalProvider,
-      voice: cfg.enableVoice,
-      vision: cfg.enableVision,
+      review: cfg.appMode === "fixture" ? "fixture" : liveReady && reviewConfigured(env) ? "live" : "unconfigured",
+      retrieval: "local",
+      voice: cfg.enableVoice && (cfg.appMode === "fixture" || Boolean(env.ELEVENLABS_API_KEY?.trim() && env.ELEVENLABS_STT_MODEL?.trim() && env.ELEVENLABS_TTS_MODEL?.trim() && env.ELEVENLABS_VOICE_ID?.trim() && env.VOICE_SUPERVISED_DEMO === "true" && Number.isInteger(Number(env.VOICE_MAX_PROVIDER_CALLS)) && Number(env.VOICE_MAX_PROVIDER_CALLS) > 0 && Number(env.VOICE_MAX_PROVIDER_CALLS) <= 100)),
+      vision: false,
     },
   };
   return json(body);
