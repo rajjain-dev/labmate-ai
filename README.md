@@ -1,17 +1,11 @@
 # LabMate AI
 
-An undergraduate teaching-lab preparation coach: share your current thinking, explore one question with a reasoning hint, add your reflection, and continue. Open source excerpts and prepare questions for your TA. Includes consented voice transcription and summary readback. It never approves an experiment.
+Upload your lab handout, start a voice conversation, hear a brief and the handout's precautions, then ask questions out loud. LabMate listens again after each answer. Typing is optional. There are no app checkboxes or transcript-confirmation screens.
 
-## Run locally
+Use Node 24: npm ci, copy .env.example to .env.local, then npm run dev. For a standalone build use npm run build and provide runtime environment variables; locally, `HOSTNAME=127.0.0.1 PORT=3107 node --env-file=.env.local .next/standalone/server.js`. Never commit credentials.
 
-Use Node 24 from .nvmrc. Run npm ci, copy .env.example to .env.local if needed, then npm run dev. The default fixture mode is visibly labeled. For the standalone production app run npm run build, then supply runtime environment variables and npm start (or node --env-file=.env.local .next/standalone/server.js).
+Live conversation uses xAI and ElevenLabs. PDF extraction supports selectable text; uploaded precautions are quoted with page references. The application keeps the handout and conversation in the page's memory and does not save the PDF. Your course protocol and lab supervisor remain authoritative. See docs/MVP.md for setup, limits and actual verification.
 
-Live operation needs xAI and ElevenLabs server-only credentials plus the supervised flags and per-process attempt caps documented in docs/MVP.md. Never commit .env.local or use NEXT_PUBLIC_ for keys. Public/serverless live operation requires a distributed limiter.
+The human requested skipping tests. Production compilation and targeted live requests are recorded in docs/STATUS.md; no suite pass or human microphone end-to-end pass is claimed. Public live access still needs a shared limiter. Snowflake and camera remain excluded.
 
-## Current scope
-
-Live Grok review, an editable student form, inspectable local NIST passages, fixed emergency guidance, clarification loop, recording/confirmation and speech controls. The local sources provide general experimental-design context, not a course protocol or SDS. Snowflake and camera are excluded from the fast MVP.
-
-The human explicitly requested skipping tests for this delivery. Production build/TypeScript compilation passed, and a live review returned a valid response with three sources. No claim is made that the changed MVP passed the test suites. See docs/STATUS.md and docs/MVP.md for exact commits, actual evidence and remaining release work.
-
-The shared remote is https://github.com/rajjain-dev/labmate-ai. Development coordination records and ownership history remain in coordination/. B's original backend and later repair contributions are preserved; D completed missing roles under the human's delivery instruction.
+Shared remote: https://github.com/rajjain-dev/labmate-ai. Role contributions and direct human delivery decisions are recorded in coordination/.

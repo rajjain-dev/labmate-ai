@@ -9,7 +9,6 @@ export interface SpeechButtonProps {
 }
 
 export function SpeechButton({ speechText, disabled = false, mode = "disabled" }: SpeechButtonProps) {
-  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState("");
@@ -35,7 +34,7 @@ export function SpeechButton({ speechText, disabled = false, mode = "disabled" }
   function stop() { generation.current++; cleanup(); setBusy(false); setPlaying(false); setNotice(""); }
 
   async function listen() {
-    if (disabled || mode === "disabled" || !consent || !speechText.trim() || speechText.length > 900 || busy || playing) return;
+    if (disabled || mode === "disabled" || !speechText.trim() || speechText.length > 900 || busy || playing) return;
     const token = ++generation.current;
     cleanup(); setError(""); setNotice(""); setBusy(true);
     const abort = new AbortController(); controller.current = abort;
@@ -54,22 +53,21 @@ export function SpeechButton({ speechText, disabled = false, mode = "disabled" }
       const player = new Audio(objectUrl); audio.current = player;
       const finish = () => { if (token === generation.current) { cleanup(); setPlaying(false); setBusy(false); } };
       player.onended = finish;
-      player.onerror = () => { if (token === generation.current) { finish(); setError("Playback failed. Read the visible review."); } };
-      setNotice(returnedMode === "fixture" ? "Fixture audio: a sample notice plays instead of your review. Live speech has not been used." : "Reading the latest review summary through ElevenLabs.");
+      player.onerror = () => { if (token === generation.current) { finish(); setError("Playback failed. Read the guidance below."); } };
+      setNotice(returnedMode === "fixture" ? "Fixture audio: a sample notice plays instead of your guidance. Live speech has not been used." : "Reading the latest guidance summary through ElevenLabs.");
       await player.play();
       if (token !== generation.current) return;
       setBusy(false); setPlaying(true);
     } catch {
       if (token !== generation.current) return;
-      cleanup(); setBusy(false); setPlaying(false); setError("Speech is unavailable. Read the visible review.");
+      cleanup(); setBusy(false); setPlaying(false); setError("Speech is unavailable. Read the guidance below.");
     } finally { if (controller.current === abort) controller.current = null; }
   }
 
-  return <section aria-label="Listen to review">
-    <label><input type="checkbox" checked={consent} disabled={busy || playing || disabled || mode === "disabled"} onChange={event => setConsent(event.target.checked)} />I consent to sending this summary to ElevenLabs for speech in live mode.</label>
-    {mode === "fixture" && <p>Fixture mode plays a sample notice; it does not read your review.</p>}
-    {mode === "disabled" && <p>Spoken summaries are unavailable. Read the visible review.</p>}
-    <button type="button" disabled={disabled || mode === "disabled" || !consent || !speechText.trim() || speechText.length > 900 || busy || playing} onClick={listen}>Listen to summary</button>
+  return <section aria-label="Listen to guidance">
+    {mode === "fixture" && <p>Fixture mode plays a sample notice; it does not read your guidance.</p>}
+    {mode === "disabled" && <p>Spoken summaries are unavailable. Read the guidance below.</p>}
+    <button type="button" disabled={disabled || mode === "disabled" || !speechText.trim() || speechText.length > 900 || busy || playing} onClick={listen}>Listen to summary</button>
     {(busy || playing) && <button type="button" onClick={stop}>Stop audio</button>}
     <p role="status" aria-live="polite">{busy ? "Preparing audio." : notice}</p>
     {error && <p role="alert">{error}</p>}

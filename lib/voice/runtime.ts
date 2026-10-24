@@ -21,7 +21,7 @@ export function voiceMode(): "fixture" | "live" {
 export function reserveVoiceCall(mode: "fixture" | "live") {
   const now = Date.now();
   if (now - windowStarted >= 60_000) { windowStarted = now; callsThisMinute = 0; }
-  if (callsThisMinute >= 5 || active >= 2) throw new VoiceError(429, "RATE_LIMITED", "Voice is busy. Try again in a minute.", true);
+  if (callsThisMinute >= 20 || active >= 2) throw new VoiceError(429, "RATE_LIMITED", "Voice is busy. Try again in a minute.", true);
   if (mode === "live" && providerCalls >= Number(process.env.VOICE_MAX_PROVIDER_CALLS)) {
     throw new VoiceError(503, "REVIEW_UNAVAILABLE", "This demo's voice allowance is exhausted. Text remains available.");
   }

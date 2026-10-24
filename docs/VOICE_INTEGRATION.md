@@ -1,45 +1,15 @@
-# D voice integration handoff
+# Conversational voice integration
 
-Owner: D. These implementations are on `feat/voice-integration`. C001 is still PENDING: B must publish shared contracts and the affected owners must explicitly agree before these interfaces are merged or mounted in A's page. Live ElevenLabs transcription of synthetic MP4 and MP3 readback through the production server routes passed on October 24 at approximately 12:36 PM New York time. An actual browser microphone journey remains unverified; see docs/TRACK_EVIDENCE.md.
+The human requested a conversation as the primary experience, with optional typing and no app checkboxes or transcript confirmation. This replaces the original C001 confirmation workflow under direct human direction; see coordination/DECISIONS.md (C002).
 
-## Components proposed for B's contract
+Upload a selectable-text lab PDF, then press Start conversation. LabMate generates a short overview, reads precautions quoted from the handout, and starts listening. A 2.2-second pause after speech ends a turn; ElevenLabs transcribes it, Grok answers using the handout and recent conversation, and ElevenLabs speaks the answer. The next listening turn starts automatically. End conversation or say “stop listening” to finish. Switching away from the page also ends the session. Typing is available under Type instead after ending voice.
 
-```ts
-import { VoiceRecorder } from "@/components/voice/VoiceRecorder";
-import { SpeechButton } from "@/components/voice/SpeechButton";
+`VoiceCoach` uses an AudioContext resumed during the start gesture, preventing an extra playback click. It requests browser microphone permission, plays before recording, closes the microphone before uploads, and cancels streams/fetches/audio on stop or unmount. Browser permission cannot be bypassed. Voice is turn-based: speaking over LabMate does not interrupt it; use End conversation. Each captured utterance is bounded to 29 seconds / 5 MiB. Quiet turns are discarded locally and listening resumes. No transcript-confirmation claim is made: transcribe returns requiresConfirmation=false and the legacy review inputMode supports voice.
 
-interface VoiceRecorderProps {
-  onConfirm: (transcript: string) => void;
-  disabled?: boolean;
-  mode?: "disabled" | "fixture" | "live"; // defaults to disabled
-}
-interface SpeechButtonProps {
-  speechText: string;
-  disabled?: boolean;
-  mode?: "disabled" | "fixture" | "live"; // defaults to disabled
-}
-```
+`/api/lab` extracts up to 25 pages / 24,000 characters from a 5-MiB PDF in a worker capped at 192 MiB and 8 seconds. The application does not save the PDF. `/api/conversation` receives the handout and at most 12 recent turns. Exact precaution quotes must occur on their cited page, or they are removed. User documents and history are untrusted data, never system instructions. No claim is made that the handout includes every hazard or that the app monitors or approves an experiment. Emergency reports use fixed local escalation copy and end voice after the spoken response.
 
-A owns form state. `onConfirm` fills a draft only: it must not submit a review. A maps the text into the bounded form fields, preserves student edits, and sets `inputMode: "voice_confirmed"` only after confirmation. Editing the transcript invalidates confirmation. Pass only the newest validated review's `speechText` to `SpeechButton`; changing that prop cancels stale playback and releases its URL. Clear it when form edits invalidate the old review. Both components keep text available on failure and use explicit consent. D will align these local implementation props with B's accepted exports once published; they do not constitute an independent shared contract.
+Speech endpoints keep same-origin checks, bounded request/response bodies, a 15-second deadline, and private responses. Audio duration is verified server-side, including packet-derived timing for streaming WebM/Opus. The supervised single Node process permits 20 voice calls/minute, two concurrently, plus VOICE_MAX_PROVIDER_CALLS (1–100) as a per-process paid-attempt cap. Conversation uses the existing shared model-attempt wrapper and separate bounded concurrency. Provider-side spend caps remain important because process restart resets in-memory allowances. Public/serverless live operation still requires shared limits; defaults stay fixture/disabled.
 
-## HTTP and provider behavior
+The configured ElevenLabs STT/TTS models and voice remain server-only. `.env.local` is ignored and excluded from standalone packaging. Clicking Start conversation authorizes the disclosed audio/text processing; there are no additional app consent gates. The small fixed intro asset is genuine ElevenLabs output generated from the configured voice on October 24; the handout conversation uses freshly synthesized briefings and answers.
 
-- `/api/transcribe`: multipart `file` plus `consent=true`; no other fields, duplicates, URLs, or caller-supplied duration. Success is `{requestId, transcript, requiresConfirmation: true}` with `X-LabMate-Mode: fixture|live`.
-- `/api/speech`: strict JSON `{text, consent: true}`, 1–900 trimmed characters. Returns MP3 bytes and mode/request ID headers. The configured voice and model cannot be overridden by a caller.
-- Errors follow handoff section 9: `{requestId,error:{code,message,retryable}}`. Every response is `no-store`; provider errors and credentials are not echoed. Cross-origin calls are rejected with 403.
-- Audio is limited to 5 MiB and a finite readable duration of at most 30 seconds. The pinned `music-metadata` parser checks container metadata after MIME and signature checks. Browser WebM/Opus recordings that omit header duration use a bounded in-process EBML parser: audio packet timestamps and Opus frame durations determine the recording length. Unsupported or unreadable timing remains rejected. No caller-supplied timer or external executable is used. The recorder prefers WebM/Opus when supported and retains MP4 for other browsers.
-- Transcription failures show the server's sanitized error message, including a busy/exhausted demo allowance or invalid recording, instead of hiding every cause behind a generic unavailable message. Provider response bodies remain private.
-- The recorder stops at 29 seconds to allow encoder padding. Cancelling, disabling, navigating away, or resolving a late permission request releases the microphone. Cancellation propagates to fetch. Voice endpoints use a shared 15-second deadline and bounded streaming body reads.
-- Fixture transcription returns clearly labeled synthetic sample text. Fixture speech plays a prerecorded announcement (“This is fixture audio…”), rather than pretending to synthesize the submitted review. Fixture mode never calls ElevenLabs. The bytes are bundled in the standalone deployment output.
-
-## Local setup and live verification
-
-Use Node 24 from `.nvmrc`, `npm ci`, and copy `.env.example` to `.env.local` if it does not already exist. Secrets belong only in `.env.local` or the deployment host's secret settings. The file is ignored by Git. Set `ENABLE_VOICE=true` with `APP_MODE=fixture` for the local fixture routes; review integration still depends on A and B.
-
-For live tests, first redeem the event credits in the correct ElevenLabs workspace. In Developers → API Keys, create a restricted key permitting Speech to Text and Text to Speech. Optional Models read and Voices read permissions allow inspecting supported IDs. Set a provider credit limit in the dashboard. Store the key in `ELEVENLABS_API_KEY`, select an available fixed voice, and fill `ELEVENLABS_STT_MODEL`, `ELEVENLABS_TTS_MODEL`, and `ELEVENLABS_VOICE_ID`. Models `scribe_v2` and `eleven_multilingual_v2` and stock voice George (`JBFqnCBsd6RMkjVDRZzb`) have now passed live calls with this local key. Models listing returns a scoped permission denial; that does not block the tested speech endpoints. The key remains in ignored `.env.local`, and the default fixture/disabled settings were preserved after the temporary live test process stopped.
-
-Live voice additionally requires `APP_MODE=live`, `ENABLE_VOICE=true`, `VOICE_SUPERVISED_DEMO=true`, and `VOICE_MAX_PROVIDER_CALLS` between 1 and 100. These gates allow a supervised single Node process only. The process permits at most five voice calls per minute and two concurrently, across all callers. Its live-attempt counter resets on restart, so it is not a persistent daily spend cap. Keep a provider-side quota. A shared distributed limiter is required before opening live voice on public/serverless infrastructure; until then keep it disabled there.
-
-Run `npm run typecheck`, `npm test`, and `npm run build`. Then explicitly test a consented browser recording, correction/confirmation, and summary readback with the team's available account. Record sanitized time, tested commit, selected models, latency, mode, and result in `docs/TRACK_EVIDENCE.md`. Never record the key, account identifier, raw audio, or private student text. A fixture or configuration check does not qualify the sponsor track.
-
-References checked October 24, 2026: [Create transcript](https://elevenlabs.io/docs/api-reference/speech-to-text/convert), [Create speech](https://elevenlabs.io/docs/api-reference/text-to-speech/convert), [API key setup](https://elevenlabs.io/docs/help-center/technical/how-do-i-authorize-myself-using-an-api-key).
+Production build/TypeScript and targeted live endpoint/browser diagnostics are recorded in docs/STATUS.md. Test suites were skipped at the human's request. Actual human microphone capture and silence detection need a user trial; server request success is not a claim of an end-to-end microphone pass.

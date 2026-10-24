@@ -1,20 +1,16 @@
 # Integrated MVP status
 
-Owner: D. Updated October 24, 2026, 1:50 PM America/New_York.
+Owner: D. Updated October 24, 2026. Exact release code commit is recorded in coordination/status/D.json.
 
-- Current application commit: 90eddf8, simple coaching and streaming browser voice correction, following MVP 6357fc3.
-- Scope: working local student UI, live Grok review, clarification edits, inspectable NIST excerpts, fixed emergency guidance, integrated consented voice input and summary readback.
-- Source commits: B backend/skill/repairs 3eabcbf; D voice alignment 1843942; D MVP UI/evidence 618b059; final assembly 6357fc3. A/C's original remote starter records are preserved; D completed the missing modules at the human's explicit request.
-- Contract: B C001 wire schema 1.0 used unchanged. D ACK recorded; no fabricated A/C ACKs. Human explicitly authorized D to complete other roles for fast MVP delivery.
-- Verification actually run: npm run build PASS on 6357fc3, including TypeScript compilation and standalone packaging. Test suites SKIPPED at the human's request; no claim they pass on the changed MVP. CI suites are opt-in via LABMATE_RUN_TESTS=true during this sprint.
-- Live request on 6357fc3: HTTP 200, state needs_clarification, mode live, model grok-4.20-0309-non-reasoning, retrieval local, 3 sources and 2 findings, 7328 ms. App request ID: 17b75d8a-840d-4d57-a650-1af2e88bab85.
-- Coaching: two prompts only (what you are doing, what help you need), a brief explanation and one scientific follow-up. Students can reply and continue. No grades or completeness checklist; safety escalation remains explicit.
-- Voice: reproduced streaming WebM rejection (422); now packet-derived duration permits the same synthetic audio through live ElevenLabs (200, 664 ms, confirmation required). Actual human microphone capture remains for the user to exercise.
-- Current revision: production build/TypeScript compilation PASS; test suites remain skipped at the human request. Live browser guidance from the two-input form was observed successfully; evidence is recorded in the coordination update.
-- Local app URL: http://127.0.0.1:3107 (supervised single Node process). No public deployment URL.
-- Modes and secrets: default shared config is fixture, live requires explicit supervised flags and provider attempt caps; local live keys are in ignored .env.local only. No vendor retention promise is made.
-- Source pack: three short attributed NIST design excerpts, general guidance only. No course-specific protocol or SDS, no safety approval.
-- Excluded to ship faster: Snowflake and camera. No claim of qualifying those tracks.
-- Remaining public release work: host/shared limiter for public live access, instructor applicability review, root license/public-release decision, demo/submission materials.
-
-See docs/MVP.md for setup, docs/TRACK_EVIDENCE.md for sanitized live evidence, and data/SOURCE_LICENSES.md for provenance. Earlier role review docs are historical snapshots; B's repair commit is integrated.
+- Current experience: upload a selectable-text lab PDF, start voice, hear the overview and exact handout precaution quotes, then ask ongoing questions. Voice is primary; typing is optional. No app checkboxes, grading, or transcript-confirmation gate.
+- Human authority: D may complete other roles, skip test suites, remove confirmation, and implement the uploaded-handout conversation. C002 records this direction without fabricated peer ACKs.
+- Production compilation: npm run build PASS, including TypeScript, standalone package and PDF worker. Final release evidence is recorded with the code commit.
+- Targeted packaged PDF diagnostic: HTTP 200; synthetic one-page handout, 297 extracted characters, 156 ms. Initial worker handoff failure was repaired: byte buffers now travel inside an object, preserving them through Turbopack's worker wrapper.
+- Live Grok briefing: HTTP 200, 1060 ms; three precaution quotes, all verified against page 1 of the synthetic handout. Follow-up answer and ElevenLabs audio evidence are recorded in D's release status.
+- Browser: PDF chooser/upload observed working, conversation control enabled, optional typed question exercised. Actual human microphone capture, pause detection, and continuous spoken conversation still need the user's trial. Server diagnostics do not substitute for that evidence.
+- Tests: suites SKIPPED at the human's request. Legacy confirmation/component and old rate-limit assertions are now historical and need updating before opting CI suites back in.
+- Local app: http://127.0.0.1:3107. No public host is claimed. Public/serverless live use needs shared limits; current operation is a supervised single process with bounded concurrency, rate limits and provider-attempt caps.
+- Data: no credentials, private handouts, private audio or student messages are committed. The PDF is not saved by the app; handout text and recent turns are sent to xAI, audio/text for speech to ElevenLabs. No provider retention promise is made.
+- Bounds: 5-MiB PDF, 25 pages, 24,000 extracted characters; 29-second / 5-MiB utterances; 20 voice calls/minute and two concurrent, plus configured hard per-process paid-attempt caps. Voice ends on leaving the foreground. Talking over playback does not interrupt it; End conversation does.
+- Preserved: fixed emergency escalation, handout source page inspection, bounded private routes, source-based precaution quotes and no experimental approval.
+- Remaining release work: human microphone trial, instructor applicability review, public hosting controls, root license/public-release decision and demo/submission materials. Snowflake and camera remain excluded.

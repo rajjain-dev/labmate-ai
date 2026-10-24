@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const transcript = mode === "fixture"
       ? "[Fixture transcript; no audio was transcribed.] Compare how water temperature affects dissolving time."
       : await transcribe(audio, signal);
-    return Response.json({ requestId, transcript, requiresConfirmation: true }, { headers: { ...privateHeaders, "X-LabMate-Mode": mode } });
+    return Response.json({ requestId, transcript, requiresConfirmation: false }, { headers: { ...privateHeaders, "X-LabMate-Mode": mode } });
   } catch (error) { return errorResponse(error, requestId, signal); }
   finally { release?.(); }
 }

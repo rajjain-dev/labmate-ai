@@ -1,12 +1,12 @@
 /**
- * LabMate shared contracts — wire schema 1.0, contract revision C001 (proposed).
+ * LabMate shared contracts — wire schema 1.0, contract revision C002 (human-directed voice flow).
  * Owner: B. Consumers (A, C, D) import types and schemas from here; never fork them.
  * Change procedure: CONTRACT_PROPOSAL -> ACKs from affected owners -> D records decision.
  */
 import { z } from "zod";
 
 export const SCHEMA_VERSION = "1.0" as const;
-export const CONTRACT_REVISION = "C001" as const;
+export const CONTRACT_REVISION = "C002" as const;
 
 // ---------------------------------------------------------------------------
 // Request and source contracts (handoff section 7)
@@ -22,13 +22,13 @@ export const ReviewRequestSchema = z
     schemaVersion: z.literal(SCHEMA_VERSION),
     clientRequestId: z.string().uuid(),
     contextId: ContextIdSchema,
-    goal: z.string().trim().min(10).max(1000),
+    goal: z.string().trim().min(10).max(5000),
     materials: z.array(item(120)).max(20),
     steps: z.array(item(300)).min(1).max(20),
     equipment: z.array(item(120)).max(20),
     conditions: z.string().max(1000), // empty is valid and meaningful
     question: z.string().max(500),
-    inputMode: z.enum(["typed", "voice_confirmed"]),
+    inputMode: z.enum(["typed", "voice", "voice_confirmed"]),
   })
   .strict();
 export type ReviewRequest = z.infer<typeof ReviewRequestSchema>;
@@ -170,7 +170,7 @@ export const TranscribeResponseSchema = z
   .object({
     requestId: z.string().uuid(),
     transcript: z.string().max(5000),
-    requiresConfirmation: z.literal(true),
+    requiresConfirmation: z.literal(false),
   })
   .strict();
 export type TranscribeResponse = z.infer<typeof TranscribeResponseSchema>;
@@ -258,11 +258,7 @@ export const VoiceModeSchema = z.enum(["disabled", "fixture", "live"]);
 export type VoiceMode = z.infer<typeof VoiceModeSchema>;
 
 export interface VoiceRecorderProps {
-  /**
-   * Called with the student-confirmed transcript. Fills a draft only and never submits a review.
-   * A maps it into the form fields, preserves edits, and sets inputMode "voice_confirmed" only after
-   * confirmation; editing the transcript afterwards invalidates that confirmation.
-   */
+  /** Legacy name retained for compatibility. C002 calls this automatically; no confirmation UI. */
   onConfirm: (transcript: string) => void;
   /** Disable while a review call is in flight. */
   disabled?: boolean;

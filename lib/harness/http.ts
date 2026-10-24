@@ -179,7 +179,7 @@ export function _resetRateLimit() {
 }
 
 /** Wrap the model call with the per-process allowance. Counted per attempt, because each attempt is paid. */
-function capProviderCalls(generate: GenerateFn, max: number): GenerateFn {
+export function capProviderCalls(generate: GenerateFn, max: number): GenerateFn {
   return (input, signal) => {
     if (providerCalls >= max) throw new HarnessError("REVIEW_UNAVAILABLE", "This demo's live review allowance is exhausted. Fixture and emergency guidance remain available.");
     providerCalls++;
